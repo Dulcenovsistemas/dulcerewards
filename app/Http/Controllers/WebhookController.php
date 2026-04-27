@@ -42,17 +42,22 @@ class WebhookController extends Controller
             'calificacion' => $mensaje,
         ]);
 
+     
         // 📲 RESPUESTA AUTOMÁTICA
         try {
-            $twilio = new \App\Services\TwilioService();
 
-            $respuesta = "💖 ¡Gracias por tu calificación!\n\n"
-                . "Nos ayudas a mejorar cada día 🧁";
+            if (env('TWILIO_ENABLED')) {
 
-            $twilio->enviarWhatsApp($cliente->telefono, $respuesta);
+                $twilio = new \App\Services\TwilioService();
+
+                $respuesta = "💖 ¡Gracias por tu calificación!\n\n"
+                    . "Nos ayudas a mejorar cada día 🧁";
+
+                $twilio->enviarWhatsApp($cliente->telefono, $respuesta);
+            }
 
         } catch (\Exception $e) {
-             Log::error('Error respuesta encuesta: ' . $e->getMessage());
+            \Log::error('Error respuesta encuesta: ' . $e->getMessage());
         }
 
         return response('ok', 200);

@@ -92,10 +92,10 @@ class ClienteController extends Controller
                 . "⭐ Acumula puntos en cada compra\n"
                 . "🎁 Canjéalos por recompensas deliciosas\n\n"
                 . "¡Te esperamos pronto! 💖";
-
-            if ($cliente->recibe_notificaciones) {
-                $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
-            }
+                
+                if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones) {
+                    $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
+                }
 
         } catch (\Exception $e) {
             // opcional: log

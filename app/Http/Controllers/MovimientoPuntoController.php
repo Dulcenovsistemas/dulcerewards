@@ -97,54 +97,55 @@ class MovimientoPuntoController extends Controller
         ]);
 
         // 📲 WHATSAPP AUTOMÁTICO
-       try {
+      try {
+
+            // 🔢 puntos totales
+            $puntosTotales = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
+
+            // 🎁 premio disponible
+            $premio = Premio::where('activo', 1)
+                ->where('puntos_requeridos', '<=', $puntosTotales)
+                ->orderByDesc('puntos_requeridos')
+                ->first();
+
+            // 📝 mensaje principal
+            if ($premio) {
+                $mensaje = "🎂 Dulce Noviembre\n\n"
+                    . "⭐ Has acumulado {$puntos} puntos\n"
+                    . "🔢 Total: {$puntosTotales} puntos\n\n"
+                    . "🎁 ¡Ya tienes una recompensa disponible!\n"
+                    . "👉 {$premio->nombre}\n\n"
+                    . "¡Canjéala en tu próxima compra! 💖";
+            } else {
+                $mensaje = "🎂 Dulce Noviembre\n\n"
+                    . "⭐ Has acumulado {$puntos} puntos\n"
+                    . "🔢 Total: {$puntosTotales} puntos\n\n"
+                    . "Sigue comprando para obtener recompensas 🎁";
+            }
+
+            // 🔥 SOLO si Twilio está activo + cliente acepta
+            if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
+
                 $twilio = new \App\Services\TwilioService();
 
-                // 🔢 puntos totales
-                $puntosTotales = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
+                // 📩 1. Mensaje de puntos
+                $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
 
-                // 🎁 premio disponible
-                $premio = Premio::where('activo', 1)
-                    ->where('puntos_requeridos', '<=', $puntosTotales)
-                    ->orderByDesc('puntos_requeridos')
-                    ->first();
+                // ⭐ 2. Encuesta
+                $encuesta = "📝 ¿Cómo calificarías tu experiencia?\n\n"
+                    . "Responde con un número:\n\n"
+                    . "1️⃣ Excelente\n"
+                    . "2️⃣ Bueno\n"
+                    . "3️⃣ Regular\n"
+                    . "4️⃣ Malo\n"
+                    . "5️⃣ Muy malo";
 
-                // 📝 mensaje principal
-                if ($premio) {
-                    $mensaje = "🎂 Dulce Noviembre\n\n"
-                        . "⭐ Has acumulado {$puntos} puntos\n"
-                        . "🔢 Total: {$puntosTotales} puntos\n\n"
-                        . "🎁 ¡Ya tienes una recompensa disponible!\n"
-                        . "👉 {$premio->nombre}\n\n"
-                        . "¡Canjéala en tu próxima compra! 💖";
-                } else {
-                    $mensaje = "🎂 Dulce Noviembre\n\n"
-                        . "⭐ Has acumulado {$puntos} puntos\n"
-                        . "🔢 Total: {$puntosTotales} puntos\n\n"
-                        . "Sigue comprando para obtener recompensas 🎁";
-                }
-
-                // 📲 SOLO si acepta notificaciones
-                if ($cliente->recibe_notificaciones == 1) {
-
-                    // 📩 1. Mensaje de puntos
-                    $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
-
-                    // ⭐ 2. Encuesta
-                    $encuesta = "📝 ¿Cómo calificarías tu experiencia?\n\n"
-                        . "Responde con un número:\n\n"
-                        . "1️⃣ Excelente\n"
-                        . "2️⃣ Bueno\n"
-                        . "3️⃣ Regular\n"
-                        . "4️⃣ Malo\n"
-                        . "5️⃣ Muy malo";
-
-                    $twilio->enviarWhatsApp($cliente->telefono, $encuesta);
-                }
-
-            } catch (\Exception $e) {
-                \Log::error('Error Twilio: ' . $e->getMessage());
+                $twilio->enviarWhatsApp($cliente->telefono, $encuesta);
             }
+
+        } catch (\Exception $e) {
+            \Log::error('Error Twilio: ' . $e->getMessage());
+        }
         return back()->with('success', 'Puntos agregados correctamente 🎉');
     }
 
@@ -176,7 +177,6 @@ class MovimientoPuntoController extends Controller
                 return back()->with('error', 'Sucursal no válida');
             }
 
-            // 🔒 VALIDACIÓN DE CIUDAD
             if ($cliente->sucursal->ciudad !== $sucursal->ciudad) {
                 return back()->with('error', 'No puedes canjear en otra ciudad');
             }
@@ -194,14 +194,19 @@ class MovimientoPuntoController extends Controller
 
             // 📲 ENVIAR WHATSAPP
             try {
-                $twilio = new \App\Services\TwilioService();
 
-                $twilio->enviarWhatsApp(
-                    $cliente->telefono,
-                    "🎂 Dulce Noviembre\n\n🎉 Canje realizado\nPremio: {$premio->nombre}\n\n¡Gracias por tu preferencia! 💖"
-                );
+                if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
+
+                    $twilio = new \App\Services\TwilioService();
+
+                    $twilio->enviarWhatsApp(
+                        $cliente->telefono,
+                        "🎂 Dulce Noviembre\n\n🎉 Canje realizado\nPremio: {$premio->nombre}\n\n¡Gracias por tu preferencia! 💖"
+                    );
+                }
+
             } catch (\Exception $e) {
-                // opcional: log
+                \Log::error('Error Twilio: ' . $e->getMessage());
             }
 
             return back()->with('success', 'Canje realizado: ' . $premio->nombre . ' 🎉');
