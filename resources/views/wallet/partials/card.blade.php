@@ -34,7 +34,7 @@
                 </div>
 
                 <h3 class="text-5xl font-bold mb-4">
-                    {{ $puntos }} ⭐
+                    {{ $puntos }} 
                 </h3>
 
                 <!-- barra -->
