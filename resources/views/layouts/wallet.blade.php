@@ -24,6 +24,42 @@ function cerrarQR() {
     document.getElementById('qrModal').classList.add('hidden');
     document.getElementById('qrModal').classList.remove('flex');
 }
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToHistorial() {
+    document.getElementById('historial').scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+
+function toggleFAQ(button) {
+    const content = button.nextElementSibling;
+    const icon = button.querySelector('i');
+
+    const isOpen = content.style.maxHeight;
+
+    // cerrar todos (opcional, tipo acordeón real)
+    document.querySelectorAll('.faq-content').forEach(el => {
+        el.style.maxHeight = null;
+    });
+
+    document.querySelectorAll('.bi-chevron-down').forEach(i => {
+        i.classList.remove('rotate-180');
+    });
+
+    // abrir el actual
+    if (!isOpen) {
+        content.style.maxHeight = content.scrollHeight + "px";
+        icon.classList.add('rotate-180');
+    }
+}
+
+function goBack() {
+    window.history.back();
+}
 </script>    
 
 </body>

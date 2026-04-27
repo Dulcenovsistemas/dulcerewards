@@ -44,6 +44,10 @@ Route::post('/canjear', [MovimientoPuntoController::class, 'canjear'])->name('ca
 
 use App\Http\Controllers\WalletController;
 
+Route::get('/ayuda/{token}', [WalletController::class, 'ayuda'])->name('ayuda');
+
+Route::get('/privacidad/{token}', [WalletController::class, 'privacidad'])->name('privacidad');
+
 Route::get('/cliente/{token}', [WalletController::class, 'show'])
     ->name('wallet.show');
 

@@ -39,7 +39,10 @@
         @include('wallet.partials.rewards')
 
         <!-- 📊 MOVIMIENTOS -->
-        @include('wallet.partials.movimientos')
+        <div id="historial">
+            @include('wallet.partials.movimientos')
+        </div>
+        
 
     </div>
 
@@ -52,30 +55,34 @@
     border-t border-white/10
 ">
 
-
     <div class="w-full flex justify-around py-3 text-white">
 
-        <button class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
+        <!-- Inicio -->
+        <button onclick="scrollToTop()" class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
             <i class="bi bi-house text-lg"></i>
             Inicio
         </button>
 
-        <button class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
-            <i class="bi bi-gift text-lg"></i>
-            Premios
-        </button>
-
-        <button class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
+        <!-- Historial -->
+        <button onclick="scrollToHistorial()" class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
             <i class="bi bi-clock-history text-lg"></i>
             Historial
         </button>
 
+        <!-- Soporte -->
+        <a href="{{ route('ayuda', $cliente->qr_token) }}" class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
+            <i class="bi bi-headset text-lg"></i>
+            Ayuda
+        </a>
+
+        <!-- Perfil -->
         <a href="{{ route('perfil', $cliente->qr_token) }}" class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
             <i class="bi bi-person text-lg"></i>
             Perfil
         </a>
 
     </div>
+
 </div>
 
 <!-- 📲 MODAL QR -->

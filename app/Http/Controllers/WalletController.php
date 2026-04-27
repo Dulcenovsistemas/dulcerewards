@@ -36,10 +36,26 @@ class WalletController extends Controller
         ));
     }
 
-   public function perfil($token)
+     public function perfil($token)
     {
         $cliente = Cliente::where('qr_token', $token)->firstOrFail();
 
         return view('wallet.perfil', compact('cliente'));
     }
+
+    public function ayuda($token)
+    {
+        $cliente = Cliente::where('qr_token', $token)->firstOrFail();
+
+        return view('wallet.ayuda', compact('cliente'));
+    }
+
+    public function privacidad($token)
+    {
+        $cliente = Cliente::where('qr_token', $token)->firstOrFail();
+
+        return view('wallet.privacidad', compact('cliente'));
+    }
+
+    
 }
