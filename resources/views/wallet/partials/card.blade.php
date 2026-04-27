@@ -1,10 +1,10 @@
-<div class="w-full md:max-w-md mx-auto mb-6">
+<div class="w-full mb-6">
 
     <div class="relative 
         bg-gradient-to-br from-[#d29ba8] via-[#b57c8a] to-[#7a4f5d] 
         rounded-3xl 
-        p-7 
-        min-h-[180px]
+        px-6 py-7
+        min-h-[220px]
         shadow-2xl 
         text-white 
         overflow-hidden">
@@ -15,8 +15,8 @@
         <div class="relative z-10 flex flex-col justify-between h-full">
 
             <!-- header -->
-            <div class="flex justify-between items-center">
-                <img src="{{ asset('images/logo.png') }}" class="h-12">
+            <div class="flex justify-between items-start">
+                <img src="{{ asset('images/logo.png') }}" class="h-14">
 
                 <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
                     Cliente
@@ -24,17 +24,16 @@
             </div>
 
             <!-- contenido -->
-            <div class="mt-4">
+            <div>
 
                 <div class="flex justify-between items-center mb-2">
-                    <p class="text-sm opacity-80">Puntos</p>
-                    <p class="text-sm opacity-80">
+                    <p class="text-base opacity-80">Puntos</p>
+                    <p class="text-base opacity-80">
                         {{ $puntos }} / 10
                     </p>
                 </div>
 
-                <!-- 🔥 MÁS GRANDE -->
-                <h3 class="text-4xl font-bold mb-4">
+                <h3 class="text-5xl font-bold mb-4">
                     {{ $puntos }} ⭐
                 </h3>
 
