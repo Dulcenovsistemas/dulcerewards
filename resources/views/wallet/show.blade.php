@@ -29,7 +29,8 @@
     </div>
 
     <!-- 💳 CONTENIDO CENTRADO -->
-    <div class="w-full md:max-w-md mx-auto px-4">
+
+    <div class="w-full px-4">
 
         <!-- 💳 TARJETA -->
         @include('wallet.partials.card')
@@ -51,7 +52,8 @@
     border-t border-white/10
 ">
 
-    <div class="w-full md:max-w-md mx-auto flex justify-around py-3 text-white">
+
+    <div class="w-full flex justify-around py-3 text-white">
 
         <button class="flex flex-col items-center text-xs opacity-80 hover:opacity-100">
             <i class="bi bi-house text-lg"></i>
