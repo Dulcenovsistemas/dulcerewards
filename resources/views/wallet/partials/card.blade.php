@@ -1,22 +1,30 @@
-<div class="w-full mb-6">
+<div class="w-full md:max-w-md mx-auto mb-6">
 
-    <div class="relative bg-gradient-to-br from-[#d29ba8] via-[#b57c8a] to-[#7a4f5d] rounded-3xl p-6 shadow-2xl text-white overflow-hidden">
+    <div class="relative 
+        bg-gradient-to-br from-[#d29ba8] via-[#b57c8a] to-[#7a4f5d] 
+        rounded-3xl 
+        p-7 
+        min-h-[180px]
+        shadow-2xl 
+        text-white 
+        overflow-hidden">
 
         <!-- glow -->
         <div class="absolute inset-0 bg-white/10 backdrop-blur-xl"></div>
 
-        <div class="relative z-10">
+        <div class="relative z-10 flex flex-col justify-between h-full">
 
             <!-- header -->
-            <div class="flex justify-between items-center mb-6">
-                <img src="{{ asset('images/logo.png') }}" class="h-10">
+            <div class="flex justify-between items-center">
+                <img src="{{ asset('images/logo.png') }}" class="h-12">
 
-                <span class="text-xs bg-white/20 px-3 py-1 rounded-full">
+                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
                     Cliente
                 </span>
             </div>
 
-            <div class="mb-4">
+            <!-- contenido -->
+            <div class="mt-4">
 
                 <div class="flex justify-between items-center mb-2">
                     <p class="text-sm opacity-80">Puntos</p>
@@ -25,12 +33,13 @@
                     </p>
                 </div>
 
-                <h3 class="text-3xl font-bold mb-3">
+                <!-- 🔥 MÁS GRANDE -->
+                <h3 class="text-4xl font-bold mb-4">
                     {{ $puntos }} ⭐
                 </h3>
 
                 <!-- barra -->
-                <div class="w-full h-3 bg-white/20 rounded-full overflow-hidden">
+                <div class="w-full h-4 bg-white/20 rounded-full overflow-hidden">
                     <div class="h-full rounded-full
                         bg-gradient-to-r from-[#f3c7d0] to-[#d29ba8]
                         transition-all duration-500"
