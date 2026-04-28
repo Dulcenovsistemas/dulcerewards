@@ -277,7 +277,8 @@
         <div class="grid grid-cols-1 gap-4">
 
             <!-- ESCANEAR -->
-            <button class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
+            <button onclick="iniciarScanner()"
+            class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
 
                 <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 text-xl">
                     📷
@@ -289,6 +290,7 @@
                 </div>
 
             </button>
+            <div id="qr-reader" class="mt-4 hidden w-full" style="min-height: 250px;"></div>
 
             <!-- TELÉFONO -->
             <button onclick="mostrarTelefono()"

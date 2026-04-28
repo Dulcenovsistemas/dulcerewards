@@ -42,6 +42,8 @@ Route::resource('movimientos', MovimientoPuntoController::class);
 
 Route::post('/canjear', [MovimientoPuntoController::class, 'canjear'])->name('canjear');
 
+Route::get('/movimientos/crear/{token}', [MovimientoPuntoController::class, 'crearDesdeQR']);
+
 use App\Http\Controllers\WalletController;
 
 Route::get('/ayuda/{token}', [WalletController::class, 'ayuda'])->name('ayuda');
@@ -55,6 +57,7 @@ Route::get('/cliente/{token}', [WalletController::class, 'show'])
 Route::get('/perfil/{token}', [WalletController::class, 'perfil'])->name('perfil');
 
 Route::get('/test-twilio', [MovimientoPuntoController::class, 'testTwilio']);
+
 
 
 require __DIR__.'/auth.php';

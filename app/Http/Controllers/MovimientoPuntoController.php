@@ -216,6 +216,19 @@ class MovimientoPuntoController extends Controller
         }
     }
 
+
+    public function crearDesdeQR($token)
+    {
+        $cliente = Cliente::where('token', $token)->first();
+
+        if (!$cliente) {
+            return back()->with('error', 'Cliente no encontrado');
+        }
+
+        return view('movimientos.crear', compact('cliente'));
+    }
+
+
     public function testTwilio()
     {
         try {
