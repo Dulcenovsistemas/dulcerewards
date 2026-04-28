@@ -14,6 +14,7 @@
     ">
         <i class="bi bi-arrow-left text-white text-lg"></i>
     </button>
+    <br>
 
     <h1 class="text-xl font-semibold mb-6">Centro de ayuda</h1>
 
@@ -32,7 +33,7 @@
 
             <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-4">
                 <p class="text-sm text-gray-400 pb-4">
-                    Escaneando tu código QR en cada compra.
+                    Acumula puntos en cada compra escaneando tu QR o proporcionando tu número. Los puntos se asignan por cada producto participante: pasteles grandes, chicos, flan y cheesecake.
                 </p>
             </div>
         </div>
@@ -71,7 +72,8 @@
     <!-- 📄 LEGALES -->
     <div class="space-y-3">
 
-        <a href="#" class="block bg-white/5 p-4 rounded-xl">
+        <a href="{{ route('terminos', $cliente->qr_token) }}"  
+        class="block bg-white/5 p-4 rounded-xl">
             Términos y condiciones
         </a>
 

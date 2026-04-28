@@ -15,6 +15,7 @@
     ">
         <i class="bi bi-arrow-left text-white text-lg"></i>
     </button>
+    <br>
 
     <h1 class="text-xl font-semibold mb-6">
         Aviso de privacidad

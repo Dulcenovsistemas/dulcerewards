@@ -3,6 +3,18 @@
 @section('content')
 
 <div class="min-h-screen relative px-4 pb-24">
+       <!-- 🔙 BOTÓN VOLVER -->
+    <button onclick="goBack()" class="
+        w-10 h-10 flex items-center justify-center
+        rounded-full
+        bg-white/5
+        border border-white/10
+        hover:bg-white/10
+        transition
+    ">
+        <i class="bi bi-arrow-left text-white text-lg"></i>
+    </button>
+
 
     <!-- 👤 HEADER -->
     <div class="flex items-center justify-between mb-6 mt-4">

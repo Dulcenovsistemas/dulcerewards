@@ -47,6 +47,7 @@ use App\Http\Controllers\WalletController;
 Route::get('/ayuda/{token}', [WalletController::class, 'ayuda'])->name('ayuda');
 
 Route::get('/privacidad/{token}', [WalletController::class, 'privacidad'])->name('privacidad');
+Route::get('/terminos/{token}', [WalletController::class, 'terminos'])->name('terminos');
 
 Route::get('/cliente/{token}', [WalletController::class, 'show'])
     ->name('wallet.show');

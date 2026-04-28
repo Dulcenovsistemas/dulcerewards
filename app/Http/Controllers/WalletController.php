@@ -57,5 +57,12 @@ class WalletController extends Controller
         return view('wallet.privacidad', compact('cliente'));
     }
 
+
+    public function terminos($token)
+    {
+        $cliente = Cliente::where('qr_token', $token)->firstOrFail();
+
+        return view('wallet.terminos', compact('cliente'));
+    }
     
 }

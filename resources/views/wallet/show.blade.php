@@ -8,7 +8,7 @@
     <div class="flex justify-between items-center mb-6 mt-4 px-4">
 
         <div>
-            <p class="text-xs text-gray-400">Bienvenida</p>
+            <p class="text-xs text-gray-400">Bienvenido(a)</p>
             <h1 class="text-lg font-semibold text-white">
                 {{ $cliente->nombre }}
             </h1>
