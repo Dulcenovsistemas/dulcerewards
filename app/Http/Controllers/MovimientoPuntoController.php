@@ -209,8 +209,13 @@ class MovimientoPuntoController extends Controller
             return $this->response($request, true, 'Canje realizado: ' . $premio->nombre . ' 🎉');
 
         } catch (\Exception $e) {
-            return $this->response($request, false, 'Error al realizar el canje');
-        }
+    return response()->json([
+        'error' => true,
+        'message' => $e->getMessage()
+    ], 500);
+}
+
+        
     }
 
     private function response($request, $success, $message)
