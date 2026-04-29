@@ -33,20 +33,24 @@
             </p>
         </div>
 
-        <div>
+       <div>
             <h2 class="text-white font-medium mb-1">Acumulación de puntos</h2>
             <p>
-                Los puntos se acumulan por producto participante, no por el monto de la compra.
-                Para registrar puntos, es necesario presentar el código QR o proporcionar el número de teléfono al momento de la compra.
-                No se podrán agregar puntos de compras anteriores.
+                Los puntos se acumulan por producto participante, no por el monto total de la compra.
+                Para registrarlos, es necesario proporcionar el número de teléfono al momento de la compra.
+                No es posible agregar puntos de compras anteriores. Solo se registran puntos de compras hechas dentro de la misma ciudad, no se pueden registra compras en sucursales de diferentes ciudades.
+
+                Los puntos tienen una vigencia de un año a partir de la fecha en que se registran por primera vez.
+                Una vez transcurrido ese periodo, si no han sido canjeados, se eliminarán automáticamente y el conteo se reiniciará desde cero, tomando como nueva referencia la siguiente acumulación de puntos.
             </p>
         </div>
 
         <div>
             <h2 class="text-white font-medium mb-1">Canje de recompensas</h2>
-            <p>
-                Para canjear puntos es obligatorio presentar el código QR del cliente y una identificación oficial vigente.
-                No se realizarán canjes sin código QR.
+           <p>
+                Para canjear puntos, es obligatorio presentar el código QR del cliente junto con una identificación oficial vigente.
+                No se realizarán canjes sin alguno de estos requisitos, ni en sucursales ubicadas en una ciudad distinta a la de registro.
+
                 Los premios están sujetos a disponibilidad y no son canjeables por dinero en efectivo.
             </p>
         </div>
