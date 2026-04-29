@@ -25,87 +25,92 @@
     <!-- Panel -->
     <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-            <!-- Sucursales -->
-            <a href="{{ route('sucursales.index') }}"
-               class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
+                @if(auth()->user()->role === 'admin')
 
-                <div class="text-2xl mb-3">🏬</div>
+                    <!-- Sucursales -->
+                    <a href="{{ route('sucursales.index') }}"
+                    class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
+                        <div class="text-2xl mb-3">🏬</div>
+                        <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
+                            Sucursales
+                        </h3>
+                        <p class="text-sm text-gray-400">
+                            Gestiona todas las sucursales
+                        </p>
+                    </a>
 
-                <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
-                    Sucursales
-                </h3>
+                    <!-- Usuarios -->
+                    <a href="{{ route('users.index') }}"
+                    class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
+                        <div class="text-2xl mb-3">👥</div>
+                        <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
+                            Usuarios
+                        </h3>
+                        <p class="text-sm text-gray-400">
+                            Administra usuarios del sistema
+                        </p>
+                    </a>
 
-                <p class="text-sm text-gray-400">
-                    Gestiona todas las sucursales
-                </p>
-            </a>
+                    <!-- Premios -->
+                    <a href="{{ route('premios.index') }}"
+                    class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
+                        <div class="text-2xl mb-3">🎁</div>
+                        <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
+                            Premios
+                        </h3>
+                        <p class="text-sm text-gray-400">
+                            Sistema de fidelidad
+                        </p>
+                    </a>
 
-            <!-- Usuarios -->
-            <a href="{{ route('users.index') }}"
-               class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
-
-                <div class="text-2xl mb-3">👥</div>
-
-                <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
-                    Usuarios
-                </h3>
-
-                <p class="text-sm text-gray-400">
-                    Administra usuarios del sistema
-                </p>
-            </a>
-
-            <!-- Clientes -->
-            <a href="{{ route('clientes.index') }}"
-               class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
-
-                <div class="text-2xl mb-3">💳</div>
-
-                <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
-                    Clientes
-                </h3>
-
-                <p class="text-sm text-gray-400">
-                    Sistema de fidelidad
-                </p>
-            </a>
+                @endif
 
 
-            <!-- Premios -->
-            <a href="{{ route('premios.index') }}"
-               class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
+                <!-- Clientes (lo ven todos) -->
+                <a href="{{ route('clientes.index') }}"
+                class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
+                    <div class="text-2xl mb-3">💳</div>
+                    <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
+                        Clientes
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        Sistema de fidelidad
+                    </p>
+                </a>
 
-                <div class="text-2xl mb-3">🎁</div>
+                <!-- Movimientos (lo ven todos) -->
+                <a href="{{ route('movimientos.index') }}"
+                class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
+                    <div class="text-2xl mb-3">📊</div>
+                    <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
+                        Movimientos
+                    </h3>
+                    <p class="text-sm text-gray-400">
+                        Sistema de fidelidad
+                    </p>
+                </a>
 
-                <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
-                    Premios
-                </h3>
-
-                <p class="text-sm text-gray-400">
-                    Sistema de fidelidad
-                </p>
-            </a>
-
-            <!-- Premios -->
-            <a href="{{ route('movimientos.index') }}"
-               class="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition">
-
-                <div class="text-2xl mb-3">📊</div>
-
-                <h3 class="text-white font-semibold group-hover:text-blue-400 transition">
-                    Movimientos
-                </h3>
-
-                <p class="text-sm text-gray-400">
-                    Sistema de fidelidad
-                </p>
-            </a>
-
-        </div>
+            </div>
 
     </div>
+
+        <button
+            onclick="event.preventDefault(); if(confirm('¿Cerrar sesión?')) document.getElementById('logout-form').submit();"
+            class="fixed bottom-6 right-24 bg-red-600 hover:bg-red-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
+
+            <i class="bi bi-box-arrow-right text-[20px] leading-none"></i>
+
+        </button>
+
+        <!-- HOME -->
+        <a href="{{ route('dashboard') }}"
+        class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
+
+            <i class="bi bi-house text-[20px] leading-none"></i>
+
+        </a>
 
 </div>
 
