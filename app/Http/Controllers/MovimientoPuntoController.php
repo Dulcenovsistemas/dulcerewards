@@ -256,4 +256,11 @@ class MovimientoPuntoController extends Controller
         }
     }
 
+    public function validarCliente($token)
+    {
+        $cliente = Cliente::where('token', $token)->first();
+
+        return response()->json($cliente);
+    }
+
 }
