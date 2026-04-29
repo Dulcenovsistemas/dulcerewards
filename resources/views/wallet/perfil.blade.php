@@ -70,6 +70,22 @@
                 </span>
             </div>
 
+            <!-- Fecha de nacimiento -->
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400 text-sm">Uso</span>
+                <span class="text-white text-sm font-medium">
+                    {{ $cliente->tipo_cliente ?? '—' }}
+                </span>
+            </div>
+
+            <!-- Fecha de nacimiento -->
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400 text-sm">Empresa</span>
+                <span class="text-white text-sm font-medium">
+                    {{ $cliente->empresa_nombre ?? '—' }}
+                </span>
+            </div>
+
         </div>
 
     </div>

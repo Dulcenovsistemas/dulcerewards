@@ -42,7 +42,7 @@
                 <label class="block text-sm text-gray-300 mb-1">Teléfono</label>
                 <input type="text" name="telefono"
                     class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                    placeholder="Ej. 6561234567" required>
+                    placeholder="Ej. 526561234567" value="52" required>
             </div>
 
             <!-- FECHA NACIMIENTO -->

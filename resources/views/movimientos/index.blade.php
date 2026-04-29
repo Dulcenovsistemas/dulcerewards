@@ -315,7 +315,7 @@
 
                 <input type="text" name="telefono"
                     class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
-                    placeholder="Teléfono" required>
+                    value="52" required>
 
                 <input type="number" name="cantidad"
                     class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"

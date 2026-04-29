@@ -18,9 +18,24 @@
             <div class="flex justify-between items-start">
                 <img src="{{ asset('images/logo.png') }}" class="h-14">
 
-                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
-                    Cliente
-                </span>
+                <div class="flex gap-2 flex-wrap">
+
+ 
+                    @if($vigencia)
+                        <span class="text-sm px-3 py-1 rounded-full
+                            {{ $vigenciaVencida ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400' }}">
+
+                            {{ $vigenciaVencida ? 'Vencida' : 'Vigente' }}
+                        </span>
+
+                        <span class="text-xs bg-white/10 px-3 py-1 rounded-full text-gray-300">
+                            {{ $vigencia->format('d/m/Y') }}
+                        </span>
+
+                      
+                    @endif
+
+                </div>
             </div>
 
             <!-- contenido -->

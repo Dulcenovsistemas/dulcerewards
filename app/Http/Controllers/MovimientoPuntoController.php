@@ -10,6 +10,8 @@ use App\Models\Premio;
 
 use App\Services\TwilioService;
 
+ use Carbon\Carbon;
+
 class MovimientoPuntoController extends Controller
 {
 
@@ -30,7 +32,25 @@ class MovimientoPuntoController extends Controller
 
         $clientes = Cliente::with('sucursal')->get()->map(function ($cliente) use ($minPuntos) {
 
-            $puntos = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
+            $movimientosCliente = MovimientoPunto::where('cliente_id', $cliente->id)->get();
+
+            $puntos = $movimientosCliente->sum('puntos');
+
+            $primerMovimiento = $movimientosCliente->sortBy('created_at')->first();
+
+            $vigencia = null;
+            $vigenciaVencida = false;
+            $diasRestantes = null;
+
+            if ($primerMovimiento) {
+                $vigencia = Carbon::parse($primerMovimiento->created_at)->addYear();
+                $vigenciaVencida = now()->greaterThan($vigencia);
+                $diasRestantes = now()->diffInDays($vigencia, false);
+
+                if ($vigenciaVencida) {
+                    $puntos = 0;
+                }
+            }
 
             return [
                 'id' => $cliente->id,
@@ -38,9 +58,15 @@ class MovimientoPuntoController extends Controller
                 'telefono' => $cliente->telefono,
                 'ciudad' => optional($cliente->sucursal)->ciudad,
                 'puntos' => $puntos,
+                'vigencia' => $vigencia ? $vigencia->format('d/m/Y') : null,
+                'vigencia_vencida' => $vigenciaVencida,
+                'dias_restantes' => $diasRestantes,
                 'puede_canjear' => $puntos >= $minPuntos,
             ];
         });
+     
+
+        
 
         $sucursales = Sucursal::all();
 
