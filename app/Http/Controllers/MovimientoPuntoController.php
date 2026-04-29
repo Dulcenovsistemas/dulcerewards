@@ -22,17 +22,14 @@ class MovimientoPuntoController extends Controller
             ->limit(50)
             ->get();
 
-        // 🔥 Obtener puntos mínimos para canjear
-        $minPuntos = Premio::where('activo', 1)->min('puntos_requeridos');
+        $minPuntos = Premio::where('activo', 1)->min('puntos_requeridos') ?? 999999;
 
-        // ⚠️ fallback por si no hay premios
-        if (!$minPuntos) {
-            $minPuntos = 999999; // nadie puede canjear
-        }
+        // 🔥 traer todos los movimientos de una sola vez
+        $movimientosAgrupados = MovimientoPunto::all()->groupBy('cliente_id');
 
-        $clientes = Cliente::with('sucursal')->get()->map(function ($cliente) use ($minPuntos) {
+        $clientes = Cliente::with('sucursal')->get()->map(function ($cliente) use ($minPuntos, $movimientosAgrupados) {
 
-            $movimientosCliente = MovimientoPunto::where('cliente_id', $cliente->id)->get();
+            $movimientosCliente = $movimientosAgrupados[$cliente->id] ?? collect();
 
             $puntos = $movimientosCliente->sum('puntos');
 
@@ -45,7 +42,7 @@ class MovimientoPuntoController extends Controller
             if ($primerMovimiento) {
                 $vigencia = Carbon::parse($primerMovimiento->created_at)->addYear();
                 $vigenciaVencida = now()->greaterThan($vigencia);
-                $diasRestantes = now()->diffInDays($vigencia, false);
+                $diasRestantes = max(0, now()->diffInDays($vigencia, false));
 
                 if ($vigenciaVencida) {
                     $puntos = 0;
@@ -61,12 +58,9 @@ class MovimientoPuntoController extends Controller
                 'vigencia' => $vigencia ? $vigencia->format('d/m/Y') : null,
                 'vigencia_vencida' => $vigenciaVencida,
                 'dias_restantes' => $diasRestantes,
-                'puede_canjear' => $puntos >= $minPuntos,
+                'puede_canjear' => !$vigenciaVencida && $puntos >= $minPuntos,
             ];
         });
-     
-
-        
 
         $sucursales = Sucursal::all();
 
@@ -74,106 +68,102 @@ class MovimientoPuntoController extends Controller
     }
 
     public function store(Request $request)
-    {
+{
+    $request->validate([
+        'cantidad' => 'required|integer|min:1',
+    ]);
+
+    // 🔥 NUEVO: detectar si viene por cliente_id o teléfono
+    if ($request->cliente_id) {
+        $cliente = Cliente::find($request->cliente_id);
+    } else {
         $request->validate([
             'telefono' => 'required',
-            'cantidad' => 'required|integer|min:1',
         ]);
 
         $cliente = Cliente::where('telefono', $request->telefono)->first();
+    }
 
-        if (!$cliente) {
-            return back()->with('error', 'Cliente no encontrado');
-        }
+    if (!$cliente) {
+        return back()->with('error', 'Cliente no encontrado');
+    }
 
-        $puntos = $request->cantidad;
-        $user = auth()->user();
+    $puntos = $request->cantidad;
+    $user = auth()->user();
 
-        // 🔥 LÓGICA CLAVE
-        $sucursalId = $user->sucursal_id;
+    // 🔥 LÓGICA CLAVE
+    $sucursalId = $user->sucursal_id;
 
-        if ($user->is_admin) {
-            $request->validate([
-                'sucursal_id' => 'required|exists:sucursales,id',
-            ]);
-
-            $sucursalId = $request->sucursal_id;
-        }
-
-        $sucursal = Sucursal::find($sucursalId);
-
-        if (!$sucursal) {
-            return back()->with('error', 'Sucursal no válida');
-        }
-
-        // 🔒 VALIDACIÓN DE CIUDAD
-        if ($cliente->sucursal->ciudad !== $sucursal->ciudad) {
-            return back()->with('error', 'Este cliente pertenece a otra ciudad');
-        }
-
-        // 🚀 GUARDAR MOVIMIENTO
-        MovimientoPunto::create([
-            'cliente_id' => $cliente->id,
-            'sucursal_id' => $sucursalId,
-            'usuario_id' => $user->id,
-            'ciudad' => $sucursal->ciudad,
-            'puntos' => $puntos,
-            'tipo' => 'acumulado',
-            'descripcion' => 'Compra de '.$puntos.' pasteles',
+    if ($user->is_admin) {
+        $request->validate([
+            'sucursal_id' => 'required|exists:sucursales,id',
         ]);
 
-        // 📲 WHATSAPP AUTOMÁTICO
-      try {
-
-            // 🔢 puntos totales
-            $puntosTotales = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
-
-            // 🎁 premio disponible
-            $premio = Premio::where('activo', 1)
-                ->where('puntos_requeridos', '<=', $puntosTotales)
-                ->orderByDesc('puntos_requeridos')
-                ->first();
-
-            // 📝 mensaje principal
-            if ($premio) {
-                $mensaje = "🎂 Dulce Noviembre\n\n"
-                    . "⭐ Has acumulado {$puntos} puntos\n"
-                    . "🔢 Total: {$puntosTotales} puntos\n\n"
-                    . "🎁 ¡Ya tienes una recompensa disponible!\n"
-                    . "👉 {$premio->nombre}\n\n"
-                    . "¡Canjéala en tu próxima compra! 💖";
-            } else {
-                $mensaje = "🎂 Dulce Noviembre\n\n"
-                    . "⭐ Has acumulado {$puntos} puntos\n"
-                    . "🔢 Total: {$puntosTotales} puntos\n\n"
-                    . "Sigue comprando para obtener recompensas 🎁";
-            }
-
-            // 🔥 SOLO si Twilio está activo + cliente acepta
-            if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
-
-                $twilio = new \App\Services\TwilioService();
-
-                // 📩 1. Mensaje de puntos
-                $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
-
-                // ⭐ 2. Encuesta
-                $encuesta = "📝 ¿Cómo calificarías tu experiencia?\n\n"
-                    . "Responde con un número:\n\n"
-                    . "1️⃣ Excelente\n"
-                    . "2️⃣ Bueno\n"
-                    . "3️⃣ Regular\n"
-                    . "4️⃣ Malo\n"
-                    . "5️⃣ Muy malo";
-
-                $twilio->enviarWhatsApp($cliente->telefono, $encuesta);
-            }
-
-        } catch (\Exception $e) {
-            \Log::error('Error Twilio: ' . $e->getMessage());
-        }
-        return back()->with('success', 'Puntos agregados correctamente 🎉');
+        $sucursalId = $request->sucursal_id;
     }
+
+    $sucursal = Sucursal::find($sucursalId);
+
+    if (!$sucursal) {
+        return back()->with('error', 'Sucursal no válida');
+    }
+
+    // 🔒 VALIDACIÓN DE CIUDAD
+    if ($cliente->sucursal->ciudad !== $sucursal->ciudad) {
+        return back()->with('error', 'Este cliente pertenece a otra ciudad');
+    }
+
+    // 🚀 GUARDAR MOVIMIENTO
+    MovimientoPunto::create([
+        'cliente_id' => $cliente->id,
+        'sucursal_id' => $sucursalId,
+        'usuario_id' => $user->id,
+        'ciudad' => $sucursal->ciudad,
+        'puntos' => $puntos,
+        'tipo' => 'acumulado',
+        'descripcion' => 'Compra de '.$puntos.' pasteles',
+    ]);
+
+    // 📲 WHATSAPP (igual que lo tienes)
+    try {
+
+        $puntosTotales = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
+
+        $premio = Premio::where('activo', 1)
+            ->where('puntos_requeridos', '<=', $puntosTotales)
+            ->orderByDesc('puntos_requeridos')
+            ->first();
+
+        if ($premio) {
+            $mensaje = "🎂 Dulce Noviembre\n\n"
+                . "⭐ Has acumulado {$puntos} puntos\n"
+                . "🔢 Total: {$puntosTotales} puntos\n\n"
+                . "🎁 ¡Ya tienes una recompensa disponible!\n"
+                . "👉 {$premio->nombre}\n\n"
+                . "¡Canjéala en tu próxima compra! 💖";
+        } else {
+            $mensaje = "🎂 Dulce Noviembre\n\n"
+                . "⭐ Has acumulado {$puntos} puntos\n"
+                . "🔢 Total: {$puntosTotales} puntos\n\n"
+                . "Sigue comprando para obtener recompensas 🎁";
+        }
+
+        if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
+            $twilio = new \App\Services\TwilioService();
+            $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
+
+            $encuesta = "📝 ¿Cómo calificarías tu experiencia?\n\n"
+                . "1️⃣ Excelente\n2️⃣ Bueno\n3️⃣ Regular\n4️⃣ Malo\n5️⃣ Muy malo";
+
+            $twilio->enviarWhatsApp($cliente->telefono, $encuesta);
+        }
+
+    } catch (\Exception $e) {
+        \Log::error('Error Twilio: ' . $e->getMessage());
+    }
+
+    return back()->with('success', 'Puntos agregados correctamente 🎉');
+}
 
     public function canjear(Request $request)
     {

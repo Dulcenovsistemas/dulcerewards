@@ -69,17 +69,29 @@
 
     <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl mb-6">
 
+        <div class="p-4 border-b border-white/10">
+
+            <input 
+                type="text" 
+                id="buscadorCliente"
+                placeholder="Buscar por teléfono..."
+                class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+            >
+
+        </div>
+
     <div class="p-4 border-b border-white/10">
         <h2 class="text-white font-semibold">Clientes</h2>
     </div>
 
         <div class="max-h-[40vh] overflow-y-auto">
 
-            <table class="w-full text-sm text-gray-300">
+            <table id="tablaClientes" class="w-full text-sm text-gray-300">
 
                 <thead class="text-gray-400 text-xs uppercase bg-black/20">
                     <tr>
                         <th class="px-6 py-4 text-left">Cliente</th>
+                        <th class="px-6 py-4 text-left">Telefono</th>
                         <th class="px-6 py-4 text-left">Ciudad</th>
                         <th class="px-6 py-4 text-left">Puntos</th>
                         <th class="px-6 py-4 text-left">Recompensa</th>
@@ -90,10 +102,15 @@
                 <tbody class="divide-y divide-white/5">
 
                     @foreach($clientes as $cliente)
-                    <tr class="hover:bg-white/5">
+                    <tr class="hover:bg-white/5"
+                    data-telefono="{{ $cliente['telefono'] }}">
 
                         <td class="px-6 py-4">
                             {{ $cliente['nombre'] }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {{ $cliente['telefono'] }}
                         </td>
 
                         <td class="px-6 py-4">
@@ -118,24 +135,26 @@
 
                         <td class="px-6 py-4 text-right flex justify-end gap-3">
 
+                            <!-- VER -->
                             <a href="{{ route('clientes.show', $cliente['id']) }}"
                                 class="text-blue-400 hover:text-blue-300 text-sm">
                                 Ver
                             </a>
 
+                            <!-- REGISTRAR -->
+                            <button type="button"
+                                onclick="abrirModalConCliente({{ $cliente['id'] }}, '{{ $cliente['nombre'] }}')"
+                                class="text-green-400 hover:text-green-300 text-sm">
+                                Registrar
+                            </button>
+
+                            <!-- CANJEAR -->
                             @if($cliente['puede_canjear'])
-                               <form action="{{ route('canjear') }}" method="POST">
-                                    @csrf
-
-                                    <input type="hidden" name="cliente_id" value="{{ $cliente['id'] }}">
-                                    <input type="hidden" name="sucursal_id" value="{{ auth()->user()->sucursal_id }}">
-
-                                    <button type="button"
-                                        onclick="abrirScannerCanje({{ $cliente['id'] }})"
-                                        class="text-pink-400 hover:text-pink-300 text-sm">
-                                        Canjear
-                                    </button>
-                                </form>
+                                <button type="button"
+                                    onclick="abrirScannerCanje({{ $cliente['id'] }})"
+                                    class="text-pink-400 hover:text-pink-300 text-sm">
+                                    Canjear
+                                </button>
                             @endif
 
                         </td>
@@ -267,56 +286,61 @@
             Registrar compra
         </h2>
 
-        <p class="text-sm text-gray-400 mb-6">
+        <p class="text-sm text-gray-400 mb-4">
             ¿Cómo deseas identificar al cliente?
         </p>
 
-        <!-- OPCIONES -->
-        <div class="grid grid-cols-1 gap-4">
+        <!-- NOMBRE CLIENTE (modo tabla) -->
+        <p id="clienteNombre" class="text-white text-sm mb-3 hidden"></p>
+
+        <!-- OPCIONES (solo cuando NO hay cliente seleccionado) -->
+        <div id="opcionesIdentificacion" class="grid grid-cols-1 gap-4">
 
             <!-- ESCANEAR -->
             <button onclick="iniciarScanner()"
-            class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
-
+                class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
                 <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 text-xl">
                     📷
                 </div>
-
                 <div class="text-left">
                     <p class="text-white font-medium">Escanear QR</p>
                     <p class="text-xs text-gray-400">Usar cámara del dispositivo</p>
                 </div>
-
             </button>
+
             <div id="qr-reader" class="mt-4 hidden w-full" style="min-height: 250px;"></div>
 
             <!-- TELÉFONO -->
             <button onclick="mostrarTelefono()"
                 class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
-
                 <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-green-500/20 text-green-400 text-xl">
                     📱
                 </div>
-
                 <div class="text-left">
                     <p class="text-white font-medium">Ingresar teléfono</p>
                     <p class="text-xs text-gray-400">Buscar cliente manualmente</p>
                 </div>
-
             </button>
 
         </div>
 
-        <!-- FORM TELEFONO (OCULTO) -->
+        <!-- FORM -->
         <div id="formTelefono" class="mt-6 hidden">
 
             <form action="{{ route('movimientos.store') }}" method="POST" class="space-y-3">
                 @csrf
 
-                <input type="text" name="telefono"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
-                    value="52" required>
+                <!-- 🔥 cliente seleccionado (modo tabla) -->
+                <input type="hidden" name="cliente_id" id="clienteSeleccionado">
 
+                <!-- 🔥 teléfono (modo manual) -->
+                <div id="inputTelefono">
+                    <input type="text" name="telefono"
+                        class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
+                        placeholder="52..." value="52">
+                </div>
+
+                <!-- cantidad -->
                 <input type="number" name="cantidad"
                     class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
                     placeholder="Número de pasteles" required>
@@ -355,9 +379,6 @@
         </button>
 
     </div>
-
-    
-
 </div>
 
 <div id="modalCanje" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50">

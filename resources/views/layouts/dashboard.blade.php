@@ -45,26 +45,49 @@
         function abrirModal() {
             document.getElementById('modal').classList.remove('hidden');
             document.getElementById('modal').classList.add('flex');
+
+            // reset UI
+            document.getElementById('opcionesIdentificacion').style.display = '';
+            document.getElementById('inputTelefono').style.display = '';
+            document.getElementById('clienteNombre').classList.add('hidden');
+            document.getElementById('clienteSeleccionado').value = '';
         }
 
+        // cerrar modal
         function cerrarModal() {
             document.getElementById('modal').classList.add('hidden');
 
-            const reader = document.getElementById('qr-reader');
-
-            if (html5QrCode && scannerActivo) {
-                html5QrCode.stop().catch(() => {});
-                scannerActivo = false;
-            }
-
-            // ocultar visor
-            if (reader) {
-                reader.classList.add('hidden');
-                reader.innerHTML = "";
-            }
+            // reset UI
+            document.getElementById('opcionesIdentificacion').style.display = '';
+            document.getElementById('inputTelefono').style.display = '';
+            document.getElementById('clienteNombre').classList.add('hidden');
+            document.getElementById('clienteSeleccionado').value = '';
         }
 
+       
+        // mostrar input teléfono manual
         function mostrarTelefono() {
+            document.getElementById('formTelefono').classList.remove('hidden');
+        }
+
+        // 🔥 abrir modal con cliente seleccionado (desde tabla)
+        function abrirModalConCliente(id, nombre) {
+
+            abrirModal();
+
+            // asignar cliente
+            document.getElementById('clienteSeleccionado').value = id;
+
+            // mostrar nombre
+            const nombreUI = document.getElementById('clienteNombre');
+            nombreUI.innerText = "Cliente: " + nombre;
+            nombreUI.classList.remove('hidden');
+
+            // ocultar opciones y teléfono
+            document.getElementById('opcionesIdentificacion').style.display = 'none';
+            document.getElementById('inputTelefono').style.display = 'none';
+
+            // mostrar form directo
             document.getElementById('formTelefono').classList.remove('hidden');
         }
 
@@ -232,6 +255,25 @@ function realizarCanje(clienteId) {
         alert('Error al realizar canje');
     });
 }
+
+document.getElementById('buscadorCliente').addEventListener('input', function () {
+
+    let valor = this.value.toLowerCase();
+
+    let filas = document.querySelectorAll('#tablaClientes tbody tr');
+
+    filas.forEach(fila => {
+        let telefono = (fila.dataset.telefono || '').toLowerCase();
+        
+
+        if (telefono.includes(valor)) {
+            fila.style.display = '';
+        } else {
+            fila.style.display = 'none';
+        }
+    });
+
+});
     </script>
 
 </body>
