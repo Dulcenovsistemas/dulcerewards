@@ -153,7 +153,7 @@ class MovimientoPuntoController extends Controller
     {
         try {
 
-            $cliente = Cliente::findOrFail($request->cliente_id);
+            $cliente = Cliente::findOrFail($request->input('cliente_id'));
 
             $puntos = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
 
@@ -163,22 +163,22 @@ class MovimientoPuntoController extends Controller
                 ->first();
 
             if (!$premio) {
-                return back()->with('error', 'No tiene suficientes puntos');
+                return $this->response($request, false, 'No tiene suficientes puntos');
             }
 
             $costo = $premio->puntos_requeridos;
 
             $user = auth()->user();
 
-            $sucursalId = $request->sucursal_id;
+            $sucursalId = $request->input('sucursal_id');
             $sucursal = Sucursal::find($sucursalId);
 
             if (!$sucursal) {
-                return back()->with('error', 'Sucursal no válida');
+                return $this->response($request, false, 'Sucursal no válida');
             }
 
             if ($cliente->sucursal->ciudad !== $sucursal->ciudad) {
-                return back()->with('error', 'No puedes canjear en otra ciudad');
+                return $this->response($request, false, 'No puedes canjear en otra ciudad');
             }
 
             // 🚀 GUARDAR CANJE
@@ -192,11 +192,9 @@ class MovimientoPuntoController extends Controller
                 'descripcion' => 'Canje: ' . $premio->nombre,
             ]);
 
-            // 📲 ENVIAR WHATSAPP
+            // 📲 WHATSAPP
             try {
-
                 if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
-
                     $twilio = new \App\Services\TwilioService();
 
                     $twilio->enviarWhatsApp(
@@ -204,18 +202,30 @@ class MovimientoPuntoController extends Controller
                         "🎂 Dulce Noviembre\n\n🎉 Canje realizado\nPremio: {$premio->nombre}\n\n¡Gracias por tu preferencia! 💖"
                     );
                 }
-
             } catch (\Exception $e) {
                 \Log::error('Error Twilio: ' . $e->getMessage());
             }
 
-            return back()->with('success', 'Canje realizado: ' . $premio->nombre . ' 🎉');
+            return $this->response($request, true, 'Canje realizado: ' . $premio->nombre . ' 🎉');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Error al realizar el canje');
+            return $this->response($request, false, 'Error al realizar el canje');
         }
     }
 
+    private function response($request, $success, $message)
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => $success,
+                'message' => $message
+            ]);
+        }
+
+        return $success
+            ? back()->with('success', $message)
+            : back()->with('error', $message);
+    }
 
     public function crearDesdeQR($token)
     {

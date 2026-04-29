@@ -124,16 +124,14 @@
                             </a>
 
                             @if($cliente['puede_canjear'])
-                                <form action="{{ route('canjear') }}" method="POST">
+                               <form action="{{ route('canjear') }}" method="POST">
                                     @csrf
 
                                     <input type="hidden" name="cliente_id" value="{{ $cliente['id'] }}">
-                                    
-                                    <!-- 👇 AQUÍ VA -->
                                     <input type="hidden" name="sucursal_id" value="{{ auth()->user()->sucursal_id }}">
 
-                                    <button type="submit"
-                                        onclick="if(!confirm('¿Canjear recompensa?')) event.preventDefault();"
+                                    <button type="button"
+                                        onclick="abrirScannerCanje({{ $cliente['id'] }})"
                                         class="text-pink-400 hover:text-pink-300 text-sm">
                                         Canjear
                                     </button>
@@ -358,6 +356,30 @@
 
     </div>
 
+    
+
 </div>
+
+<div id="modalCanje" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50">
+
+        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
+
+            <h2 class="text-white text-lg font-semibold mb-4">
+                Validar cliente para canje
+            </h2>
+
+            <p class="text-sm text-gray-400 mb-4">
+                Escanea el código QR del cliente
+            </p>
+
+            <div id="qr-reader-canje" class="w-full" style="min-height:250px;"></div>
+
+            <button onclick="cerrarModalCanje()" class="mt-4 text-gray-400 text-sm hover:text-white">
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
 
 @endsection

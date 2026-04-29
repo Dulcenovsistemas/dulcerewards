@@ -58,6 +58,9 @@ Route::get('/perfil/{token}', [WalletController::class, 'perfil'])->name('perfil
 
 Route::get('/test-twilio', [MovimientoPuntoController::class, 'testTwilio']);
 
-
+Route::get('/validar-cliente/{token}', function ($token) {
+    $cliente = \App\Models\Cliente::where('token', $token)->first();
+    return response()->json($cliente);
+});
 
 require __DIR__.'/auth.php';
