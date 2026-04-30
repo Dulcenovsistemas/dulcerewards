@@ -118,13 +118,13 @@
 
                                 <!-- Ver -->
                                 <a href="{{ route('users.show', $user) }}" class="hover:text-white transition">
-                                    👁️
+                                    <i class="bi bi-eye-fill"></i>
                                 </a>
 
                                 <!-- Editar -->
                                 <a href="{{ route('users.edit', $user) }}"
                                    class="hover:text-pink-400 transition">
-                                    ✏️
+                                    <i class="bi bi-pencil-square"></i> 
                                 </a>
 
                                 <!-- Eliminar -->
@@ -134,7 +134,7 @@
 
                                     <button onclick="return confirm('¿Eliminar usuario?')"
                                             class="hover:text-red-400 transition">
-                                        ❌
+                                       <i class="bi bi-x-circle"></i>
                                     </button>
                                 </form>
 

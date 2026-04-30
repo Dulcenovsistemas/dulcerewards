@@ -43,12 +43,17 @@
 
         // MODAL
         function abrirModal() {
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
+            const modal = document.getElementById('modal');
 
-            // reset UI
+            if (!modal) return console.error('Modal no encontrado');
+
+            modal.classList.remove('hidden');
+
+            // reset limpio
             document.getElementById('opcionesIdentificacion').style.display = '';
             document.getElementById('inputTelefono').style.display = '';
+            document.getElementById('formTelefono').classList.add('hidden');
+
             document.getElementById('clienteNombre').classList.add('hidden');
             document.getElementById('clienteSeleccionado').value = '';
         }
@@ -73,21 +78,20 @@
         // 🔥 abrir modal con cliente seleccionado (desde tabla)
         function abrirModalConCliente(id, nombre) {
 
-            abrirModal();
+            const modal = document.getElementById('modal');
+            if (!modal) return console.error('Modal no encontrado');
 
-            // asignar cliente
+            modal.classList.remove('hidden');
+
             document.getElementById('clienteSeleccionado').value = id;
 
-            // mostrar nombre
             const nombreUI = document.getElementById('clienteNombre');
             nombreUI.innerText = "Cliente: " + nombre;
             nombreUI.classList.remove('hidden');
 
-            // ocultar opciones y teléfono
             document.getElementById('opcionesIdentificacion').style.display = 'none';
             document.getElementById('inputTelefono').style.display = 'none';
 
-            // mostrar form directo
             document.getElementById('formTelefono').classList.remove('hidden');
         }
 
@@ -160,11 +164,16 @@ let scannerCanjeActivo = false;
 let clienteCanjeId = null;
 
 function abrirScannerCanje(clienteId) {
-    clienteCanjeId = clienteId;
 
     const modal = document.getElementById('modalCanje');
+
+    if (!modal) return console.error('ModalCanje no encontrado');
+
     modal.classList.remove('hidden');
-    modal.classList.add('flex');
+
+    // ⚠️ IMPORTANTE: no agregues flex aquí
+
+    clienteCanjeId = clienteId;
 
     if (!html5QrCanje) {
         html5QrCanje = new Html5Qrcode("qr-reader-canje");
@@ -183,8 +192,6 @@ function abrirScannerCanje(clienteId) {
         }
     ).then(() => {
         scannerCanjeActivo = true;
-    }).catch(err => {
-        console.error('Error cámara canje:', err);
     });
 }
 

@@ -4,18 +4,23 @@
 
 @section('content')
 
-<div class="max-w-2xl mx-auto">
+<div class="relative max-w-2xl mx-auto">
+
+    <!-- Glow -->
+    <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-pink-500/10 blur-[120px] pointer-events-none"></div>
 
     <!-- HEADER -->
-    <div class="mb-6">
-        <h1 class="text-xl text-white font-semibold">Nuevo Usuario</h1>
-        <p class="text-sm text-gray-400">Crea un nuevo usuario en el sistema</p>
+    <div class="mb-8 relative z-10">
+        <h1 class="text-2xl text-white font-bold">Nuevo Usuario</h1>
+        <p class="text-sm text-gray-400">
+            Crea un usuario y define su nivel de acceso dentro de Dulce Rewards
+        </p>
     </div>
 
     <!-- CARD -->
-    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative z-10">
 
-        <form action="{{ route('users.store') }}" method="POST" class="space-y-5">
+        <form action="{{ route('users.store') }}" method="POST" class="space-y-6">
             @csrf
 
             <!-- NOMBRE -->
@@ -23,7 +28,8 @@
                 <label class="block text-sm text-gray-300 mb-1">Nombre</label>
                 <input type="text" name="name"
                     value="{{ old('name') }}"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                    placeholder="Ej. Juan Pérez"
                     required>
 
                 @error('name')
@@ -33,10 +39,11 @@
 
             <!-- EMAIL -->
             <div>
-                <label class="block text-sm text-gray-300 mb-1">Email</label>
+                <label class="block text-sm text-gray-300 mb-1">Correo electrónico</label>
                 <input type="email" name="email"
                     value="{{ old('email') }}"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                    placeholder="ejemplo@correo.com"
                     required>
 
                 @error('email')
@@ -48,7 +55,8 @@
             <div>
                 <label class="block text-sm text-gray-300 mb-1">Contraseña</label>
                 <input type="password" name="password"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                    placeholder="••••••••"
                     required>
 
                 @error('password')
@@ -61,12 +69,16 @@
                 <label class="block text-sm text-gray-300 mb-1">Rol</label>
 
                 <select name="rol" id="rol"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition">
 
-                    <option value="admin">Admin</option>
-                    <option value="sucursal">Sucursal</option>
+                    <option value="admin">Administrador</option>
+                    <option value="sucursal">Usuario de sucursal</option>
 
                 </select>
+
+                <p class="text-xs text-gray-500 mt-1">
+                    Define si el usuario tendrá acceso completo o solo a una sucursal.
+                </p>
 
                 @error('rol')
                     <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
@@ -78,7 +90,7 @@
                 <label class="block text-sm text-gray-300 mb-1">Sucursal</label>
 
                 <select name="sucursal_id"
-                    class="w-full bg-white/5 border border-white/10 text-black px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition">
 
                     <option value="">Seleccionar sucursal</option>
 
@@ -99,13 +111,13 @@
             <div class="flex justify-end gap-3 pt-4">
 
                 <a href="{{ route('users.index') }}"
-                   class="px-4 py-2 text-gray-300 hover:bg-white/10 rounded-lg">
+                   class="px-4 py-2 text-gray-300 hover:bg-white/10 rounded-lg transition">
                     Cancelar
                 </a>
 
                 <button
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium">
-                    Guardar
+                    class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-pink-500/30 hover:scale-105">
+                    Crear usuario
                 </button>
 
             </div>
@@ -130,8 +142,6 @@
     }
 
     rol.addEventListener('change', toggleSucursal);
-
-    // ejecutar al cargar
     toggleSucursal();
 </script>
 

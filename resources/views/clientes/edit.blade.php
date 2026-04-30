@@ -4,16 +4,21 @@
 
 @section('content')
 
-<div class="max-w-2xl mx-auto">
+<div class="relative max-w-2xl mx-auto">
+
+    <!-- Glow -->
+    <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-pink-500/10 blur-[120px] pointer-events-none"></div>
 
     <!-- HEADER -->
-    <div class="mb-6">
-        <h1 class="text-xl text-white font-semibold">Editar Cliente</h1>
-        <p class="text-sm text-gray-400">Modifica la información del cliente</p>
+    <div class="mb-8 relative z-10">
+        <h1 class="text-2xl text-white font-bold">Editar Cliente</h1>
+        <p class="text-sm text-gray-400">
+            Actualiza la información del cliente dentro de Dulce Rewards
+        </p>
     </div>
 
     <!-- CARD -->
-    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative z-10">
 
         <!-- ERRORES -->
         @if ($errors->any())
@@ -26,7 +31,7 @@
             </div>
         @endif
 
-        <form action="{{ route('clientes.update', $cliente) }}" method="POST" class="space-y-5">
+        <form action="{{ route('clientes.update', $cliente) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
 
@@ -35,7 +40,7 @@
                 <label class="block text-sm text-gray-300 mb-1">Nombre</label>
                 <input type="text" name="nombre"
                     value="{{ old('nombre', $cliente->nombre) }}"
-                    class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
                     required>
             </div>
 
@@ -44,7 +49,7 @@
                 <label class="block text-sm text-gray-300 mb-1">Teléfono</label>
                 <input type="text" name="telefono"
                     value="{{ old('telefono', $cliente->telefono) }}"
-                    class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
                     required>
             </div>
 
@@ -53,14 +58,14 @@
                 <label class="block text-sm text-gray-300 mb-1">Fecha de nacimiento</label>
                 <input type="date" name="fecha_nacimiento"
                     value="{{ old('fecha_nacimiento', $cliente->fecha_nacimiento) }}"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition">
             </div>
 
             <!-- TIPO CLIENTE -->
             <div>
                 <label class="block text-sm text-gray-300 mb-1">Tipo de cliente</label>
                 <select name="tipo_cliente" id="tipo_cliente"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition">
 
                     <option value="propio" {{ old('tipo_cliente', $cliente->tipo_cliente) == 'propio' ? 'selected' : '' }}>
                         Cliente normal
@@ -69,6 +74,7 @@
                     <option value="empresa" {{ old('tipo_cliente', $cliente->tipo_cliente) == 'empresa' ? 'selected' : '' }}>
                         Empresa
                     </option>
+
                 </select>
             </div>
 
@@ -77,7 +83,7 @@
                 <label class="block text-sm text-gray-300 mb-1">Nombre de la empresa</label>
                 <input type="text" name="empresa_nombre"
                     value="{{ old('empresa_nombre', $cliente->empresa_nombre) }}"
-                    class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition">
             </div>
 
             <!-- SUCURSAL -->
@@ -87,7 +93,7 @@
                 </label>
 
                 <select name="sucursal_registro_id"
-                    class="w-full bg-white/5 border border-white/10 text-black px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
                     required>
 
                     <option value="">Seleccionar sucursal</option>
@@ -103,14 +109,18 @@
             </div>
 
             <!-- NOTIFICACIONES -->
-            <div class="flex items-center gap-2 pt-2">
+            <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+
+                <div>
+                    <p class="text-sm text-white font-medium">Recibir notificaciones</p>
+                    <p class="text-xs text-gray-400">
+                        Permite enviar promociones y recompensas al cliente
+                    </p>
+                </div>
+
                 <input type="checkbox" name="recibe_notificaciones" value="1"
                     {{ old('recibe_notificaciones', $cliente->recibe_notificaciones) ? 'checked' : '' }}
-                    class="rounded bg-white/5 border border-white/10 text-blue-500 focus:ring-blue-500">
-
-                <label class="text-sm text-gray-300">
-                    Recibir notificaciones
-                </label>
+                    class="w-5 h-5 rounded bg-white/10 border border-white/10 text-pink-500 focus:ring-pink-500">
             </div>
 
             <!-- BOTONES -->
@@ -122,8 +132,8 @@
                 </a>
 
                 <button
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow">
-                    Actualizar
+                    class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-pink-500/30 hover:scale-105">
+                    Guardar cambios
                 </button>
 
             </div>
@@ -139,13 +149,16 @@
     const tipoCliente = document.getElementById('tipo_cliente');
     const campoEmpresa = document.getElementById('campo_empresa');
 
-    tipoCliente.addEventListener('change', function () {
-        if (this.value === 'empresa') {
+    function toggleEmpresa() {
+        if (tipoCliente.value === 'empresa') {
             campoEmpresa.classList.remove('hidden');
         } else {
             campoEmpresa.classList.add('hidden');
         }
-    });
+    }
+
+    tipoCliente.addEventListener('change', toggleEmpresa);
+    toggleEmpresa();
 </script>
 
 @endsection

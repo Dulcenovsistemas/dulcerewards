@@ -103,7 +103,7 @@
                                 <!-- Editar -->
                                 <a href="{{ route('sucursales.edit', $sucursal) }}"
                                    class="hover:text-pink-400 transition">
-                                   ✏️
+                                   <i class="bi bi-pencil-square"></i> 
                                 </a>
 
                                 <!-- Eliminar -->
@@ -113,7 +113,7 @@
 
                                     <button onclick="return confirm('¿Eliminar sucursal?')"
                                             class="hover:text-red-400 transition">
-                                            ❌
+                                            <i class="bi bi-x-circle"></i>
                                     </button>
                                 </form>
 

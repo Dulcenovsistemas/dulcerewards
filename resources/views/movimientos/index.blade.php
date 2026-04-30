@@ -4,280 +4,224 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto py-6 px-4">
+<div class="relative max-w-7xl mx-auto py-6 px-4">
 
-    @if(session('error'))
-    <div class="mb-4 bg-red-500/20 border border-red-400/30 text-red-300 px-4 py-3 rounded-xl text-sm">
-        {{ session('error') }}
-    </div>
-@endif
-
-@if(session('success'))
-    <div class="mb-4 bg-green-500/20 border border-green-400/30 text-green-300 px-4 py-3 rounded-xl text-sm">
-        {{ session('success') }}
-    </div>
-@endif
-
+```
     <!-- HEADER -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-xl text-white font-semibold">Movimientos</h1>
-            <p class="text-sm text-gray-400">Historial de puntos de clientes</p>
+            <h1 class="text-2xl font-bold text-white">
+                Movimientos · Dulce Rewards
+            </h1>
+            <p class="text-sm text-gray-400">
+                Control de puntos en tiempo real
+            </p>
         </div>
 
-        <div class="flex gap-3">
-            <!-- REGISTRAR -->
-            <button onclick="abrirModal()"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                + Registrar compra
-            </button>
-        </div>
+        <button onclick="abrirModal()"
+            class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl shadow-lg">
+            + Registrar compra
+        </button>
     </div>
 
-    <!-- BANNER -->
-    <div class="mb-6 bg-gradient-to-r from-blue-600/20 to-blue-800/20 border border-blue-500/20 p-4 rounded-xl">
-        <p class="text-sm text-blue-300">
-            Registra compras y consulta el historial de puntos de tus clientes.
-        </p>
-    </div>
-
-    <!-- CARDS -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <!-- KPIs -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
 
         <div class="bg-white/5 border border-white/10 rounded-xl p-5">
-            <p class="text-gray-400 text-sm">Movimientos totales</p>
-            <h3 class="text-white text-2xl font-semibold">
+            <p class="text-gray-400 text-sm">Movimientos</p>
+            <h3 class="text-white text-3xl font-bold">
                 {{ $movimientos->count() }}
             </h3>
         </div>
 
         <div class="bg-white/5 border border-white/10 rounded-xl p-5">
-            <p class="text-gray-400 text-sm">Puntos acumulados</p>
-            <h3 class="text-green-400 text-2xl font-semibold">
+            <p class="text-gray-400 text-sm">Puntos</p>
+            <h3 class="text-green-400 text-3xl font-bold">
                 {{ $movimientos->where('tipo','acumulado')->sum('puntos') }}
             </h3>
         </div>
 
         <div class="bg-white/5 border border-white/10 rounded-xl p-5">
-            <p class="text-gray-400 text-sm">Canjes realizados</p>
-            <h3 class="text-red-400 text-2xl font-semibold">
+            <p class="text-gray-400 text-sm">Canjes</p>
+            <h3 class="text-red-400 text-3xl font-bold">
                 {{ $movimientos->where('tipo','canjeado')->count() }}
             </h3>
         </div>
 
     </div>
 
-    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl mb-6">
+    <!-- GRID POS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <div class="p-4 border-b border-white/10">
+        <!-- CLIENTES -->
+        <div class="bg-white/5 border border-white/10 rounded-2xl">
 
-            <input 
-                type="text" 
-                id="buscadorCliente"
-                placeholder="Buscar por teléfono..."
-                class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <div class="p-4 border-b border-white/10">
+                <input id="buscadorCliente"
+                    placeholder="Buscar teléfono..."
+                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2 rounded-xl">
+            </div>
+
+            <div class="max-h-[65vh] overflow-y-auto">
+
+                @foreach($clientes as $cliente)
+                <div class="cliente-item flex justify-between items-center px-4 py-3 border-b border-white/5 cursor-pointer hover:bg-white/5"
+                data-telefono="{{ $cliente['telefono'] }}"
+                onclick="seleccionarCliente(this, {{ $cliente['id'] }}, '{{ $cliente['nombre'] }}')">
+
+                <!-- INFO -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-pink-500/20 rounded-full flex items-center justify-center text-pink-300">
+                        {{ strtoupper(substr($cliente['nombre'],0,2)) }}
+                    </div>
+
+                    <div>
+                        <p class="text-white text-sm">{{ $cliente['nombre'] }}</p>
+                        <p class="text-xs text-gray-400">{{ $cliente['telefono'] }}</p>
+                    </div>
+                </div>
+
+                <!-- DERECHA -->
+                <div class="flex items-center gap-3">
+
+                    <span class="text-green-400 text-sm font-semibold">
+                        {{ $cliente['puntos'] }}
+                    </span>
+
+                    <!-- BOTONES SIEMPRE VISIBLES -->
+                    <div class="flex gap-2">
+
+                        <a href="{{ route('clientes.show', $cliente['id']) }}"
+                            class="text-gray-400 hover:text-white text-sm transition"
+                            onclick="event.stopPropagation()">
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+
+                        <button onclick="event.stopPropagation(); abrirModalConCliente({{ $cliente['id'] }}, '{{ $cliente['nombre'] }}')"
+                            class="text-green-400 hover:text-green-300 text-sm transition">
+                            <i class="bi bi-plus-circle-fill"></i>
+                        </button>
+
+                        @if($cliente['puede_canjear'])
+                        <button onclick="event.stopPropagation(); abrirScannerCanje({{ $cliente['id'] }})"
+                            class="text-pink-400 hover:text-pink-300 text-sm transition">
+                            <i class="bi bi-gift"></i>
+                        </button>
+                        @endif
+
+                    </div>
+
+                </div>
+
+            </div>
+                @endforeach
+
+            </div>
 
         </div>
 
-    <div class="p-4 border-b border-white/10">
-        <h2 class="text-white font-semibold">Clientes</h2>
-    </div>
+        <!-- DERECHA -->
+        <div class="lg:col-span-2 space-y-4">
 
-        <div class="max-h-[40vh] overflow-y-auto">
+            <!-- PANEL POS -->
+            <div id="panelAccion"
+                class="hidden bg-white/5 border border-white/10 rounded-2xl p-4">
 
-            <table id="tablaClientes" class="w-full text-sm text-gray-300">
+                <div class="flex justify-between items-center">
 
-                <thead class="text-gray-400 text-xs uppercase bg-black/20">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Cliente</th>
-                        <th class="px-6 py-4 text-left">Telefono</th>
-                        <th class="px-6 py-4 text-left">Ciudad</th>
-                        <th class="px-6 py-4 text-left">Puntos</th>
-                        <th class="px-6 py-4 text-left">Recompensa</th>
-                        <th class="px-6 py-4 text-right">Acciones</th>
-                    </tr>
-                </thead>
+                    <div class="flex items-center gap-3">
+                        <div id="avatarCliente"
+                            class="w-10 h-10 bg-pink-500/20 rounded-full flex items-center justify-center text-pink-300">
+                            --
+                        </div>
 
-                <tbody class="divide-y divide-white/5">
+                        <div>
+                            <p id="nombreCliente" class="text-white font-medium"></p>
+                            <p class="text-xs text-gray-400">Cliente activo</p>
+                        </div>
+                    </div>
 
-                    @foreach($clientes as $cliente)
-                    <tr class="hover:bg-white/5"
-                    data-telefono="{{ $cliente['telefono'] }}">
+                    <div class="flex gap-2">
 
-                        <td class="px-6 py-4">
-                            {{ $cliente['nombre'] }}
-                        </td>
+                        <input id="cantidadRapida" type="number" value="1"
+                            class="w-20 bg-white/10 border border-white/10 text-white px-3 py-2 rounded-lg">
 
-                        <td class="px-6 py-4">
-                            {{ $cliente['telefono'] }}
-                        </td>
+                        <button onclick="registrarRapido()"
+                            class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">
+                            + Puntos
+                        </button>
 
-                        <td class="px-6 py-4">
-                            {{ $cliente['ciudad'] ?? '—' }}
-                        </td>
+                        <button onclick="abrirScannerCanje(clienteActivoId)"
+                            class="bg-white/10 px-3 py-2 rounded-lg text-white">
+                            🎁
+                        </button>
 
-                        <td class="px-6 py-4 text-green-400 font-semibold">
-                            {{ $cliente['puntos'] }}
-                        </td>
+                    </div>
 
-                        <td class="px-6 py-4">
-                            @if($cliente['puede_canjear'])
-                                <span class="bg-green-500/20 text-green-400 px-3 py-1 text-xs rounded-full">
-                                    Disponible
-                                </span>
-                            @else
-                                <span class="bg-gray-500/20 text-gray-400 px-3 py-1 text-xs rounded-full">
-                                    No disponible
-                                </span>
-                            @endif
-                        </td>
+                </div>
 
-                        <td class="px-6 py-4 text-right flex justify-end gap-3">
+            </div>
 
-                            <!-- VER -->
-                            <a href="{{ route('clientes.show', $cliente['id']) }}"
-                                class="text-blue-400 hover:text-blue-300 text-sm">
-                                Ver
-                            </a>
+            <!-- HISTORIAL -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl">
 
-                            <!-- REGISTRAR -->
-                            <button type="button"
-                                onclick="abrirModalConCliente({{ $cliente['id'] }}, '{{ $cliente['nombre'] }}')"
-                                class="text-green-400 hover:text-green-300 text-sm">
-                                Registrar
-                            </button>
+                <div class="p-4 border-b border-white/10">
+                    <h2 class="text-white font-semibold">Historial</h2>
+                </div>
 
-                            <!-- CANJEAR -->
-                            @if($cliente['puede_canjear'])
-                                <button type="button"
-                                    onclick="abrirScannerCanje({{ $cliente['id'] }})"
-                                    class="text-pink-400 hover:text-pink-300 text-sm">
-                                    Canjear
-                                </button>
-                            @endif
+                <div class="max-h-[60vh] overflow-y-auto">
 
-                        </td>
+                    @foreach($movimientos as $mov)
+                    <div class="flex justify-between px-4 py-3 border-b border-white/5">
 
-                    </tr>
+                        <div>
+                            <p class="text-white text-sm">{{ $mov->cliente->nombre }}</p>
+                            <p class="text-xs text-gray-400">{{ $mov->sucursal->nombre }}</p>
+                        </div>
+
+                        <div class="text-right">
+                            <p class="{{ $mov->tipo == 'acumulado' ? 'text-green-400' : 'text-red-400' }}">
+                                {{ $mov->tipo == 'acumulado' ? '+' : '-' }}{{ $mov->puntos }}
+                            </p>
+                            <p class="text-xs text-gray-400">
+                                {{ $mov->created_at->format('d/m/Y H:i') }}
+                            </p>
+                        </div>
+
+                    </div>
                     @endforeach
 
-                </tbody>
+                </div>
 
-            </table>
-
-        </div>
-
-    </div>
-
-    <!-- TABLA -->
-    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
-
-        <div class="p-4 border-b border-white/10">
-            <h2 class="text-white font-semibold">Movimientos</h2>
-        </div>
-
-        <div class="max-h-[60vh] overflow-y-auto">
-
-            <table class="w-full text-sm text-gray-300">
-
-                <!-- HEADER -->
-                <thead class="border-b border-white/10 text-gray-400 text-xs uppercase bg-black/20 backdrop-blur sticky top-0 z-10">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Cliente</th>
-                        <th class="px-6 py-4 text-left">Sucursal</th>
-                        <th class="px-6 py-4 text-left">Puntos</th>
-                        <th class="px-6 py-4 text-left">Tipo</th>
-                        <th class="px-6 py-4 text-left">Fecha</th>
-                    </tr>
-                </thead>
-
-                <!-- BODY -->
-                <tbody class="divide-y divide-white/5">
-
-                    @forelse($movimientos as $mov)
-                    <tr class="hover:bg-white/5 transition">
-
-                        <!-- CLIENTE -->
-                        <td class="px-6 py-4 flex items-center gap-3">
-
-                            <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-xs text-purple-300">
-                                {{ strtoupper(substr($mov->cliente->nombre, 0, 2)) }}
-                            </div>
-
-                            <span class="text-white font-medium">
-                                {{ $mov->cliente->nombre }}
-                            </span>
-
-                        </td>
-
-                        <!-- SUCURSAL -->
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 text-xs bg-white/10 text-gray-300 rounded-full">
-                                {{ $mov->sucursal->nombre }}
-                            </span>
-                        </td>
-
-                        <!-- PUNTOS -->
-                        <td class="px-6 py-4">
-                            <span class="{{ $mov->tipo == 'acumulado' ? 'text-green-400' : 'text-red-400' }}">
-                                {{ $mov->tipo == 'acumulado' ? '+' : '-' }}{{ $mov->puntos }}
-                            </span>
-                        </td>
-
-                        <!-- TIPO -->
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 text-xs rounded-full
-                                {{ $mov->tipo == 'acumulado'
-                                    ? 'bg-green-500/20 text-green-400'
-                                    : 'bg-red-500/20 text-red-400' }}">
-                                {{ ucfirst($mov->tipo) }}
-                            </span>
-                        </td>
-
-                        <!-- FECHA -->
-                        <td class="px-6 py-4 text-gray-400">
-                            {{ $mov->created_at->format('d/m/Y H:i') }}
-                        </td>
-
-                    </tr>
-
-                    @empty
-                    <tr>
-                        <td colspan="5" class="text-center py-10 text-gray-500">
-                            No hay movimientos registrados
-                        </td>
-                    </tr>
-                    @endforelse
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
     </div>
-    <!-- LOGOUT -->
-        <button
-            onclick="event.preventDefault(); if(confirm('¿Cerrar sesión?')) document.getElementById('logout-form').submit();"
-            class="fixed bottom-6 right-24 bg-red-600 hover:bg-red-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
+    ```
 
-            <i class="bi bi-box-arrow-right text-[20px] leading-none"></i>
+        <!-- LOGOUT -->
+            <button
+                onclick="event.preventDefault(); if(confirm('¿Cerrar sesión?')) document.getElementById('logout-form').submit();"
+                class="fixed bottom-6 right-24 bg-red-600 hover:bg-red-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
 
-        </button>
+                <i class="bi bi-box-arrow-right text-[20px] leading-none"></i>
 
-        <!-- HOME -->
-        <a href="{{ route('dashboard') }}"
-        class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
+            </button>
 
-            <i class="bi bi-house text-[20px] leading-none"></i>
+            <!-- HOME -->
+            <a href="{{ route('dashboard') }}"
+            class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
 
-        </a>
+                <i class="bi bi-house text-[20px] leading-none"></i>
 
-</div>
+            </a>
 
-<!-- MODAL -->
-<div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50">
+    </div>
+
+    <!-- MODAL -->
+
+<div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
 
     <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
 
@@ -381,7 +325,7 @@
     </div>
 </div>
 
-<div id="modalCanje" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50">
+<div id="modalCanje" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
 
         <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
 
@@ -402,5 +346,93 @@
         </div>
 
     </div>
+
+<script>
+
+// =========================
+// MODAL
+// =========================
+
+function abrirModal() {
+    const modal = document.getElementById('modal');
+    if (!modal) return console.error('Modal no encontrado');
+
+    modal.classList.remove('hidden');
+
+    document.getElementById('opcionesIdentificacion').style.display = '';
+    document.getElementById('inputTelefono').style.display = '';
+    document.getElementById('formTelefono').classList.add('hidden');
+
+    document.getElementById('clienteNombre').classList.add('hidden');
+    document.getElementById('clienteSeleccionado').value = '';
+}
+
+function cerrarModal() {
+    const modal = document.getElementById('modal');
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+}
+
+function abrirModalConCliente(id, nombre) {
+    abrirModal();
+
+    document.getElementById('clienteSeleccionado').value = id;
+
+    const nombreUI = document.getElementById('clienteNombre');
+    nombreUI.innerText = "Cliente: " + nombre;
+    nombreUI.classList.remove('hidden');
+
+    document.getElementById('opcionesIdentificacion').style.display = 'none';
+    document.getElementById('inputTelefono').style.display = 'none';
+
+    document.getElementById('formTelefono').classList.remove('hidden');
+}
+
+function mostrarTelefono() {
+    document.getElementById('formTelefono').classList.remove('hidden');
+}
+
+// =========================
+// MODAL CANJE
+// =========================
+
+function abrirScannerCanje(clienteId) {
+    const modal = document.getElementById('modalCanje');
+    if (!modal) return console.error('ModalCanje no encontrado');
+
+    modal.classList.remove('hidden');
+}
+
+function cerrarModalCanje() {
+    const modal = document.getElementById('modalCanje');
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+}
+
+
+const buscador = document.getElementById('buscadorCliente');
+
+if (buscador) {
+    buscador.addEventListener('input', function () {
+
+        let valor = this.value.toLowerCase();
+
+        let clientes = document.querySelectorAll('.cliente-item');
+
+        clientes.forEach(cliente => {
+            let telefono = (cliente.dataset.telefono || '').toLowerCase();
+
+            if (telefono.includes(valor)) {
+                cliente.style.display = '';
+            } else {
+                cliente.style.display = 'none';
+            }
+        });
+
+    });
+}
+</script>
 
 @endsection
