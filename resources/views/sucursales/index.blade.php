@@ -4,41 +4,44 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto">
+<div class="relative max-w-7xl mx-auto">
+
+    <!-- Glow -->
+    <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-pink-500/10 blur-[120px] pointer-events-none"></div>
 
     <!-- HEADER -->
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-8 relative z-10">
         <div>
-            <h1 class="text-xl text-white font-semibold">Sucursales</h1>
-            <p class="text-sm text-gray-400">Administra tus sucursales</p>
+            <h1 class="text-2xl text-white font-bold">Sucursales</h1>
+            <p class="text-sm text-gray-400">Gestión de puntos por ubicación</p>
         </div>
 
         <a href="{{ route('sucursales.create') }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+           class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-pink-500/30">
             + Nueva sucursal
         </a>
     </div>
 
     <!-- BANNER -->
-    <div class="mb-6 bg-gradient-to-r from-blue-600/20 to-blue-800/20 border border-blue-500/20 p-4 rounded-xl">
-        <p class="text-sm text-blue-300">
-            Puedes administrar todas tus sucursales desde este panel.
+    <div class="mb-6 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 p-4 rounded-xl">
+        <p class="text-sm text-pink-300">
+            Administra las sucursales donde tus clientes acumulan y canjean recompensas.
         </p>
     </div>
 
     <!-- CARDS -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 
-        <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+        <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-xl">
             <p class="text-gray-400 text-sm">Total sucursales</p>
-            <h3 class="text-white text-2xl font-semibold">
+            <h3 class="text-white text-3xl font-bold">
                 {{ $sucursales->count() }}
             </h3>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+        <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-xl">
             <p class="text-gray-400 text-sm">Ciudades activas</p>
-            <h3 class="text-white text-2xl font-semibold">
+            <h3 class="text-white text-3xl font-bold">
                 {{ $sucursales->pluck('ciudad')->unique()->count() }}
             </h3>
         </div>
@@ -53,7 +56,7 @@
             <table class="w-full text-sm text-gray-300">
 
                 <!-- HEADER -->
-                <thead class="border-b border-white/10 text-gray-400 text-xs uppercase bg-black/20 backdrop-blur sticky top-0 z-10">
+                <thead class="border-b border-white/10 text-gray-400 text-xs uppercase bg-black/30 sticky top-0 z-10">
                     <tr>
                         <th class="px-6 py-4 text-left">#</th>
                         <th class="px-6 py-4 text-left">Sucursal</th>
@@ -76,7 +79,7 @@
                         <!-- NOMBRE -->
                         <td class="px-6 py-4 flex items-center gap-3">
 
-                            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-xs text-blue-300">
+                            <div class="w-9 h-9 rounded-full bg-pink-500/20 flex items-center justify-center text-xs text-pink-300 font-semibold">
                                 {{ strtoupper(substr($sucursal->nombre, 0, 2)) }}
                             </div>
 
@@ -97,14 +100,10 @@
                         <td class="px-6 py-4">
                             <div class="flex justify-end gap-4 text-gray-400">
 
-                                
-
                                 <!-- Editar -->
                                 <a href="{{ route('sucursales.edit', $sucursal) }}"
-                                   class="hover:text-blue-400 transition"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                    </svg>
+                                   class="hover:text-pink-400 transition">
+                                   ✏️
                                 </a>
 
                                 <!-- Eliminar -->
@@ -114,9 +113,7 @@
 
                                     <button onclick="return confirm('¿Eliminar sucursal?')"
                                             class="hover:text-red-400 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
-                                            </svg>
+                                            ❌
                                     </button>
                                 </form>
 
@@ -136,28 +133,24 @@
 
             </table>
 
-            
-
         </div>
 
     </div>
 
-        <!-- LOGOUT -->
-        <button
-            onclick="event.preventDefault(); if(confirm('¿Cerrar sesión?')) document.getElementById('logout-form').submit();"
-            class="fixed bottom-6 right-24 bg-red-600 hover:bg-red-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
+    <!-- LOGOUT -->
+    <button
+        onclick="event.preventDefault(); if(confirm('¿Cerrar sesión?')) document.getElementById('logout-form').submit();"
+        class="fixed bottom-6 right-24 bg-red-500 hover:bg-red-600 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition hover:scale-110">
 
-            <i class="bi bi-box-arrow-right text-[20px] leading-none"></i>
+        <i class="bi bi-box-arrow-right text-[20px]"></i>
+    </button>
 
-        </button>
+    <!-- HOME -->
+    <a href="{{ route('dashboard') }}"
+       class="fixed bottom-6 right-6 bg-pink-500 hover:bg-pink-600 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition hover:scale-110">
 
-        <!-- HOME -->
-        <a href="{{ route('dashboard') }}"
-        class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
-
-            <i class="bi bi-house text-[20px] leading-none"></i>
-
-        </a>
+        <i class="bi bi-house text-[20px]"></i>
+    </a>
 
 </div>
 
