@@ -49,7 +49,7 @@
 
     </div>
 
-    <!-- RECOMPENSAS -->
+   <!-- RECOMPENSAS -->
     <div class="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6">
         <h2 class="text-white font-semibold mb-4">🎁 Recompensas disponibles</h2>
 
@@ -78,27 +78,29 @@
                 </p>
 
                 @if($esDisponible)
-                    <span class="text-xs text-green-400 font-semibold">
+
+                    <span class="text-xs text-green-400 font-semibold block mt-2">
                         Disponible
                     </span>
+
+                    <button
+                        onclick="abrirModalCanje(
+                            {{ $premio->id }},
+                            '{{ $premio->nombre }}',
+                            {{ $premio->puntos_requeridos }}
+                        )"
+                        class="mt-3 w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg">
+
+                        Canjear
+
+                    </button>
+
                 @endif
-
-                <button
-                    onclick="abrirModalCanje(
-                        {{ $premio->id }},
-                        '{{ $premio->nombre }}',
-                        {{ $premio->puntos_requeridos }}
-                    )"
-                    class="mt-3 w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg">
-
-                    Canjear
-
-                </button>
 
             </div>
 
             @empty
-            <p class="text-gray-500">No hay recompensas disponibles</p>
+                <p class="text-gray-500">No hay recompensas disponibles</p>
             @endforelse
 
         </div>

@@ -112,6 +112,19 @@ class JornadaController extends Controller
         ));
     }
 
+    public function cerrar(Jornada $jornada)
+    {
+        $jornada->update([
+            'estado' => 'cerrada',
+            'hora_fin' => now(),
+        ]);
+
+        return back()->with(
+            'success',
+            'Jornada cerrada correctamente.'
+        );
+    }
+
     /**
      * Update the specified resource in storage.
      */

@@ -69,5 +69,10 @@ Route::resource('jornadas', JornadaController::class);
 
 Route::middleware('auth')->get('/validar-cliente/{token}', [MovimientoPuntoController::class, 'validarCliente']);
 
+Route::patch(
+    '/jornadas/{jornada}/cerrar',
+    [JornadaController::class, 'cerrar']
+)->name('jornadas.cerrar');
+
 require __DIR__.'/auth.php';
 

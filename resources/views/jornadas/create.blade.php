@@ -52,17 +52,9 @@
                     required
                     class="w-full rounded-xl bg-white/5 border border-white/10 text-white px-4 py-3">
 
-                    <option value="">
-                        Selecciona una sucursal
+                    <option value="{{ auth()->user()->sucursal_id }}" selected>
+                        {{ auth()->user()->sucursal->nombre }}
                     </option>
-
-                    @foreach($sucursales as $sucursal)
-
-                        <option value="{{ $sucursal->id }}">
-                            {{ $sucursal->nombre }}
-                        </option>
-
-                    @endforeach
 
                 </select>
 

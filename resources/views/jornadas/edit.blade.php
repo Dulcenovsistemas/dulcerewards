@@ -19,10 +19,17 @@
             </p>
         </div>
 
-        <a href="{{ route('clientes.create', ['jornada' => $jornada->id]) }}"
-        class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-pink-500/30">
-            + Nuevo cliente
-        </a>
+        @if($jornada->estado === 'abierta')
+
+            <a href="{{ route('clientes.create', ['jornada' => $jornada->id]) }}"
+            class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-pink-500/30">
+
+                + Nuevo cliente
+
+            </a>
+
+        @endif
+
     </div>
 
  
@@ -102,11 +109,28 @@
                     <div class="flex gap-2">
 
             
-                        <a href="{{ route('clientes.show', $cliente) }}?jornada={{ $jornada->id }}"
-                            class="text-gray-400 hover:text-white text-sm transition"
-                            onclick="event.stopPropagation()">
-                            <i class="bi bi-eye-fill"></i>
-                        </a>
+                       @if($jornada->estado === 'abierta')
+
+    <a href="{{ route('clientes.show', $cliente) }}?jornada={{ $jornada->id }}"
+       class="text-gray-400 hover:text-white text-sm transition"
+       onclick="event.stopPropagation()">
+
+        <i class="bi bi-eye-fill"></i>
+
+    </a>
+
+@else
+
+    <button
+        type="button"
+        onclick="event.stopPropagation(); alert('Esta jornada ya está cerrada. Para consultar la información del cliente debes ir al módulo de Clientes.')"
+        class="text-gray-500 hover:text-yellow-400 text-sm transition">
+
+        <i class="bi bi-eye-fill"></i>
+
+    </button>
+
+@endif
                          <!-- Editar -->
                         <a href="{{ route('clientes.edit', $cliente) }}"
                             target="_blank"
@@ -233,12 +257,7 @@
                                 </p>
 
 
-                                <a href="{{ route('clientes.show', $cliente['id']) }}?jornada={{ $jornada->id }}"
-                                class="text-blue-400 hover:text-blue-300 text-sm">
-
-                                    Ver cliente
-
-                                </a>
+                               
 
                             </div>
 

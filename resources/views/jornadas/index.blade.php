@@ -121,13 +121,26 @@
 
                                 </a>
 
-                                <a href="{{ route('jornadas.show', $jornada) }}"
-                                   class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-500/10 hover:bg-gray-500/20 text-gray-300 transition"
-                                   title="Ver">
+                                 @if($jornada->estado === 'abierta')
 
-                                    <i class="bi bi-eye"></i>
+                                <form action="{{ route('jornadas.cerrar', $jornada) }}"
+                                    method="POST">
 
-                                </a>
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <button
+                                        onclick="return confirm('¿Cerrar esta jornada?')"
+                                        class="w-10 h-10 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition"
+                                        title="Cerrar jornada">
+
+                                        <i class="bi bi-lock-fill"></i>
+
+                                    </button>
+
+                                </form>
+
+                                @endif
 
                             </div>
 
