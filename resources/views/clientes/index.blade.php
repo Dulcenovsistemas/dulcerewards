@@ -18,10 +18,15 @@
             </p>
         </div>
 
-        <a href="{{ route('clientes.create') }}"
-           class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-pink-500/30">
-            + Nuevo cliente
-        </a>
+        @if(auth()->user()->is_admin)
+
+            <a href="{{ route('clientes.create') }}"
+            class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-pink-500/30">
+                + Nuevo cliente
+            </a>
+
+        @endif
+
     </div>
 
     <!-- CARDS -->
@@ -135,16 +140,19 @@
                                    <i class="bi bi-send-fill"></i>
                                 </a>
 
-                                <!-- Eliminar -->
-                                <form method="POST" action="{{ route('clientes.destroy', $cliente) }}">
-                                    @csrf
-                                    @method('DELETE')
 
-                                    <button onclick="return confirm('¿Eliminar cliente?')"
-                                            class="hover:text-red-400 transition">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
-                                </form>
+                                 @if(auth()->user()->is_admin)
+                                    <!-- Eliminar -->
+                                    <form method="POST" action="{{ route('clientes.destroy', $cliente) }}">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button onclick="return confirm('¿Eliminar cliente?')"
+                                                class="hover:text-red-400 transition">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </form>
+                                @endif
 
                             </div>
                         </td>
