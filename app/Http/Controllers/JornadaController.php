@@ -22,19 +22,37 @@ class JornadaController extends Controller
             ->latest('id')
             ->paginate(15);
 
-        return view('jornadas.index', compact('jornadas'));
+        $jornadaAbierta = Jornada::where('estado', 'abierta')
+            ->exists();
+
+        return view('jornadas.index', compact(
+            'jornadas',
+            'jornadaAbierta'
+        ));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $sucursales = Sucursal::orderBy('nombre')->get();
+  public function create()
+{
+    $jornadaAbierta = Jornada::where('estado', 'abierta')
+        ->exists();
 
-        return view('jornadas.create', compact('sucursales'));
+    if ($jornadaAbierta) {
+
+        return redirect()
+            ->route('jornadas.index')
+            ->with(
+                'error',
+                'Tienes jornadas pendientes por cerrar antes de crear una nueva.'
+            );
     }
 
+    $sucursales = Sucursal::orderBy('nombre')->get();
+
+    return view('jornadas.create', compact('sucursales'));
+}
     /**
      * Store a newly created resource in storage.
      */

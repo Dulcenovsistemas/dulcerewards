@@ -18,12 +18,28 @@
             </p>
         </div>
 
-        <a href="{{ route('jornadas.create') }}"
-           class="inline-flex items-center gap-2 px-5 py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-xl shadow-lg transition">
+       @if(!$jornadaAbierta)
 
-            <i class="bi bi-plus-lg"></i>
-            Nueva Jornada
-        </a>
+    <a href="{{ route('jornadas.create') }}"
+       class="inline-flex items-center gap-2 px-5 py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-xl shadow-lg transition">
+
+        <i class="bi bi-plus-lg"></i>
+        Nueva Jornada
+
+    </a>
+
+@else
+
+    <button
+        onclick="alert('Tienes jornadas pendientes por cerrar.\n\nPara abrir una nueva jornada primero debes cerrar las jornadas abiertas.')"
+        class="inline-flex items-center gap-2 px-5 py-3 bg-gray-600 text-white rounded-xl shadow-lg">
+
+        <i class="bi bi-lock-fill"></i>
+        Nueva Jornada
+
+    </button>
+
+@endif
 
     </div>
 
