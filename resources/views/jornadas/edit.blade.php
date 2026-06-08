@@ -7,7 +7,6 @@
 <div class="relative max-w-7xl mx-auto py-6 px-4">
 
 
-```
     <!-- HEADER -->
     <div class="flex justify-between items-center mb-6">
         <div>
@@ -109,28 +108,29 @@
                     <div class="flex gap-2">
 
             
-                       @if($jornada->estado === 'abierta')
+                        @if($jornada->estado === 'abierta')
 
-    <a href="{{ route('clientes.show', $cliente) }}?jornada={{ $jornada->id }}"
-       class="text-gray-400 hover:text-white text-sm transition"
-       onclick="event.stopPropagation()">
+                            <a href="{{ route('clientes.show', $cliente) }}?jornada={{ $jornada->id }}"
+                            class="text-gray-400 hover:text-white text-sm transition"
+                            onclick="event.stopPropagation()">
 
-        <i class="bi bi-eye-fill"></i>
+                                <i class="bi bi-eye-fill"></i>
 
-    </a>
+                            </a>
 
-@else
+                        @else
 
-    <button
-        type="button"
-        onclick="event.stopPropagation(); alert('Esta jornada ya está cerrada. Para consultar la información del cliente debes ir al módulo de Clientes.')"
-        class="text-gray-500 hover:text-yellow-400 text-sm transition">
+                            <button
+                                type="button"
+                                onclick="event.stopPropagation(); alert('Esta jornada ya está cerrada. Para consultar la información del cliente debes ir al módulo de Clientes.')"
+                                class="text-gray-500 hover:text-yellow-400 text-sm transition">
 
-        <i class="bi bi-eye-fill"></i>
+                                <i class="bi bi-eye-fill"></i>
 
-    </button>
+                            </button>
 
-@endif
+                        @endif
+
                          <!-- Editar -->
                         <a href="{{ route('clientes.edit', $cliente) }}"
                             target="_blank"
@@ -256,9 +256,6 @@
                                     {{ $cliente->created_at->format('d/m/Y H:i') }}
                                 </p>
 
-
-                               
-
                             </div>
 
                         </div>
@@ -280,7 +277,7 @@
         </div>
 
     </div>
-    ```
+    
 
         <!-- LOGOUT -->
             <button
@@ -291,15 +288,60 @@
 
             </button>
 
-            <!-- HOME -->
-            <a href="{{ route('dashboard') }}"
-            class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
+            <!-- HOME MENU FLOTANTE -->
 
-                <i class="bi bi-house text-[20px] leading-none"></i>
+            <div class="fixed bottom-6 right-6 z-50">
 
-            </a>
+                    <!-- OPCIONES -->
+                    <div id="menuHome"
+                        class="flex flex-col items-end gap-3 mb-3 opacity-0 pointer-events-none transition-all duration-300">
 
-    </div>
+                        <!-- Volver -->
+                        <button onclick="history.back()"
+                            class="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                        </button>
+
+                        <!-- Movimientos -->
+                        <a href="{{ route('jornadas.index') }}"
+                        class="w-12 h-12 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-arrow-left-right"></i>
+
+                        </a>
+
+                        <!-- Clientes -->
+                        <a href="{{ route('clientes.index') }}"
+                        class="w-12 h-12 rounded-full bg-pink-600 hover:bg-pink-700 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-people-fill"></i>
+
+                        </a>
+
+                        <!-- Inicio -->
+                        <a href="{{ route('dashboard') }}"
+                        class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-house-fill"></i>
+
+                        </a>
+
+                    </div>
+
+                    <!-- BOTON PRINCIPAL -->
+                    <button id="btnMenu"
+                        onclick="toggleMenu()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition">
+
+                        <i id="iconMenu" class="bi bi-list text-[22px]"></i>
+
+                    </button>
+
+            </div>
+
+        </div>
 
     <!-- MODAL -->
 
@@ -438,6 +480,31 @@
 
 <script>
 
+
+function toggleMenu() {
+
+    const menu = document.getElementById('menuHome');
+    const icon = document.getElementById('iconMenu');
+
+    if(menu.classList.contains('opacity-0')) {
+
+        menu.classList.remove('opacity-0');
+        menu.classList.remove('pointer-events-none');
+
+        icon.classList.remove('bi-list');
+        icon.classList.add('bi-x-lg');
+
+    } else {
+
+        menu.classList.add('opacity-0');
+        menu.classList.add('pointer-events-none');
+
+        icon.classList.remove('bi-x-lg');
+        icon.classList.add('bi-list');
+
+    }
+
+}
 // =========================
 // MODAL
 // =========================

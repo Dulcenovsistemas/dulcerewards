@@ -174,6 +174,95 @@
         {{ $jornadas->links() }}
     </div>
 
+    <!-- LOGOUT -->
+            <button
+                onclick="event.preventDefault(); if(confirm('¿Cerrar sesión?')) document.getElementById('logout-form').submit();"
+                class="fixed bottom-6 right-24 bg-red-600 hover:bg-red-700 text-white w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition">
+
+                <i class="bi bi-box-arrow-right text-[20px] leading-none"></i>
+
+            </button>
+
+            <!-- HOME MENU FLOTANTE -->
+
+            <div class="fixed bottom-6 right-6 z-50">
+
+                    <!-- OPCIONES -->
+                    <div id="menuHome"
+                        class="flex flex-col items-end gap-3 mb-3 opacity-0 pointer-events-none transition-all duration-300">
+
+                        <!-- Volver -->
+                        <button onclick="history.back()"
+                            class="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                        </button>
+
+                        <!-- Movimientos -->
+                        <a href="{{ route('jornadas.index') }}"
+                        class="w-12 h-12 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-arrow-left-right"></i>
+
+                        </a>
+
+                        <!-- Clientes -->
+                        <a href="{{ route('clientes.index') }}"
+                        class="w-12 h-12 rounded-full bg-pink-600 hover:bg-pink-700 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-people-fill"></i>
+
+                        </a>
+
+                        <!-- Inicio -->
+                        <a href="{{ route('dashboard') }}"
+                        class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center">
+
+                            <i class="bi bi-house-fill"></i>
+
+                        </a>
+
+                    </div>
+
+                    <!-- BOTON PRINCIPAL -->
+                    <button id="btnMenu"
+                        onclick="toggleMenu()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition">
+
+                        <i id="iconMenu" class="bi bi-list text-[22px]"></i>
+
+                    </button>
+
+            </div>
+
 </div>
+
+<script>
+    function toggleMenu() {
+
+    const menu = document.getElementById('menuHome');
+    const icon = document.getElementById('iconMenu');
+
+    if(menu.classList.contains('opacity-0')) {
+
+        menu.classList.remove('opacity-0');
+        menu.classList.remove('pointer-events-none');
+
+        icon.classList.remove('bi-list');
+        icon.classList.add('bi-x-lg');
+
+    } else {
+
+        menu.classList.add('opacity-0');
+        menu.classList.add('pointer-events-none');
+
+        icon.classList.remove('bi-x-lg');
+        icon.classList.add('bi-list');
+
+    }
+
+}
+</script>
 
 @endsection
