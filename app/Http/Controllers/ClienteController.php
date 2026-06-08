@@ -48,11 +48,20 @@ class ClienteController extends Controller
         // ✅ VALIDACIÓN
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'telefono' => 'required|unique:clientes,telefono',
+
+            'telefono' => [
+                'required',
+                'unique:clientes,telefono',
+                'regex:/^52\d{10}$/'
+            ],
+
             'fecha_nacimiento' => 'nullable|date',
             'tipo_cliente' => 'required|in:propio,empresa',
             'empresa_nombre' => 'nullable|string|max:255',
             'sucursal_registro_id' => 'required|exists:sucursales,id',
+
+            ], [
+            'telefono.regex' => 'El teléfono debe iniciar con 52 y tener exactamente 12 dígitos.'
         ]);
 
         // 🔍 NORMALIZAR TELÉFONO (opcional pero recomendado)
@@ -74,7 +83,7 @@ class ClienteController extends Controller
         // 💾 CREAR CLIENTE
         $cliente = Cliente::create([
             'nombre' => $request->nombre,
-            'telefono' => $request->telefono,
+            'telefono' => $telefono,
             'fecha_nacimiento' => $request->fecha_nacimiento,
             'tipo_cliente' => $request->tipo_cliente,
             'empresa_nombre' => $request->empresa_nombre,
