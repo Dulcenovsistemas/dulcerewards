@@ -34,6 +34,9 @@
         <form action="{{ route('clientes.store') }}" method="POST" class="space-y-6">
             @csrf
 
+            <input type="hidden"
+            name="jornada_id"
+            value="{{ request('jornada') }}">
             <!-- NOMBRE -->
             <div>
                 <label class="block text-sm text-gray-300 mb-1">Nombre</label>
@@ -90,7 +93,7 @@
                 </label>
 
                 <select name="sucursal_registro_id"
-                    class="w-full bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                    class="w-full bg-white/10 border border-white/10 text-black px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
                     required>
 
                     <option value="">Seleccionar sucursal</option>

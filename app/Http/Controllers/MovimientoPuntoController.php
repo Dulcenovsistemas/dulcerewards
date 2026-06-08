@@ -68,141 +68,136 @@ class MovimientoPuntoController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'cantidad' => 'required|integer|min:1',
-    ]);
-
-    // 🔥 NUEVO: detectar si viene por cliente_id o teléfono
-    if ($request->cliente_id) {
-        $cliente = Cliente::find($request->cliente_id);
-    } else {
+    {
         $request->validate([
-            'telefono' => 'required',
+            'cantidad' => 'required|integer|min:1',
         ]);
 
-        $cliente = Cliente::where('telefono', $request->telefono)->first();
-    }
-
-    if (!$cliente) {
-        return back()->with('error', 'Cliente no encontrado');
-    }
-
-    $puntos = $request->cantidad;
-    $user = auth()->user();
-
-    // 🔥 LÓGICA CLAVE
-    $sucursalId = $user->sucursal_id;
-
-    if ($user->is_admin) {
-        $request->validate([
-            'sucursal_id' => 'required|exists:sucursales,id',
-        ]);
-
-        $sucursalId = $request->sucursal_id;
-    }
-
-    $sucursal = Sucursal::find($sucursalId);
-
-    if (!$sucursal) {
-        return back()->with('error', 'Sucursal no válida');
-    }
-
-    // 🔒 VALIDACIÓN DE CIUDAD
-    if ($cliente->sucursal->ciudad !== $sucursal->ciudad) {
-        return back()->with('error', 'Este cliente pertenece a otra ciudad');
-    }
-
-    // 🚀 GUARDAR MOVIMIENTO
-    MovimientoPunto::create([
-        'cliente_id' => $cliente->id,
-        'sucursal_id' => $sucursalId,
-        'usuario_id' => $user->id,
-        'ciudad' => $sucursal->ciudad,
-        'puntos' => $puntos,
-        'tipo' => 'acumulado',
-        'descripcion' => 'Compra de '.$puntos.' pasteles',
-    ]);
-
-    // 📲 WHATSAPP (igual que lo tienes)
-    try {
-
-        $puntosTotales = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
-
-        $premio = Premio::where('activo', 1)
-            ->where('puntos_requeridos', '<=', $puntosTotales)
-            ->orderByDesc('puntos_requeridos')
-            ->first();
-
-        if ($premio) {
-            $mensaje = "🎂 Dulce Noviembre\n\n"
-                . "⭐ Has acumulado {$puntos} puntos\n"
-                . "🔢 Total: {$puntosTotales} puntos\n\n"
-                . "🎁 ¡Ya tienes una recompensa disponible!\n"
-                . "👉 {$premio->nombre}\n\n"
-                . "¡Canjéala en tu próxima compra! 💖";
+        // 🔥 NUEVO: detectar si viene por cliente_id o teléfono
+        if ($request->cliente_id) {
+            $cliente = Cliente::find($request->cliente_id);
         } else {
-            $mensaje = "🎂 Dulce Noviembre\n\n"
-                . "⭐ Has acumulado {$puntos} puntos\n"
-                . "🔢 Total: {$puntosTotales} puntos\n\n"
-                . "Sigue comprando para obtener recompensas 🎁";
+            $request->validate([
+                'telefono' => 'required',
+            ]);
+
+            $cliente = Cliente::where('telefono', $request->telefono)->first();
         }
 
-        if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
-            $twilio = new \App\Services\TwilioService();
-            $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
-
-            $encuesta = "📝 ¿Cómo calificarías tu experiencia?\n\n"
-                . "1️⃣ Excelente\n2️⃣ Bueno\n3️⃣ Regular\n4️⃣ Malo\n5️⃣ Muy malo";
-
-            $twilio->enviarWhatsApp($cliente->telefono, $encuesta);
+        if (!$cliente) {
+            return back()->with('error', 'Cliente no encontrado');
         }
 
-    } catch (\Exception $e) {
-        \Log::error('Error Twilio: ' . $e->getMessage());
+        $puntos = $request->cantidad;
+        $user = auth()->user();
+
+        // 🔥 LÓGICA CLAVE
+        $sucursalId = $user->sucursal_id;
+
+        if ($user->is_admin) {
+            $request->validate([
+                'sucursal_id' => 'required|exists:sucursales,id',
+            ]);
+
+            $sucursalId = $request->sucursal_id;
+        }
+
+        $sucursal = Sucursal::find($sucursalId);
+
+        if (!$sucursal) {
+            return back()->with('error', 'Sucursal no válida');
+        }
+
+        // 🔒 VALIDACIÓN DE CIUDAD
+        if ($cliente->sucursal->ciudad !== $sucursal->ciudad) {
+            return back()->with('error', 'Este cliente pertenece a otra ciudad');
+        }
+
+        MovimientoPunto::create([
+            'jornada_id' => $request->jornada_id,
+            'cliente_id' => $cliente->id,
+            'sucursal_id' => $sucursalId,
+            'usuario_id' => $user->id,
+            'ciudad' => $sucursal->ciudad,
+            'puntos' => $puntos,
+            'tipo' => 'acumulado',
+            'descripcion' => 'Compra de '.$puntos.' pasteles',
+        ]);
+
+        
+
+        // 📲 WHATSAPP (igual que lo tienes)
+        try {
+
+            $puntosTotales = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
+
+            $premio = Premio::where('activo', 1)
+                ->where('puntos_requeridos', '<=', $puntosTotales)
+                ->orderByDesc('puntos_requeridos')
+                ->first();
+
+            if ($premio) {
+                $mensaje = "🎂 Dulce Noviembre\n\n"
+                    . "⭐ Has acumulado {$puntos} puntos\n"
+                    . "🔢 Total: {$puntosTotales} puntos\n\n"
+                    . "🎁 ¡Ya tienes una recompensa disponible!\n"
+                    . "👉 {$premio->nombre}\n\n"
+                    . "¡Canjéala en tu próxima compra! 💖";
+            } else {
+                $mensaje = "🎂 Dulce Noviembre\n\n"
+                    . "⭐ Has acumulado {$puntos} puntos\n"
+                    . "🔢 Total: {$puntosTotales} puntos\n\n"
+                    . "Sigue comprando para obtener recompensas 🎁";
+            }
+
+            if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
+                $twilio = new \App\Services\TwilioService();
+                $twilio->enviarWhatsApp($cliente->telefono, $mensaje);
+
+                $encuesta = "📝 ¿Cómo calificarías tu experiencia?\n\n"
+                    . "1️⃣ Excelente\n2️⃣ Bueno\n3️⃣ Regular\n4️⃣ Malo\n5️⃣ Muy malo";
+
+                $twilio->enviarWhatsApp($cliente->telefono, $encuesta);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Error Twilio: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Puntos agregados correctamente 🎉');
     }
 
-    return back()->with('success', 'Puntos agregados correctamente 🎉');
-}
-
+    
     public function canjear(Request $request)
     {
         try {
 
-            $cliente = Cliente::findOrFail($request->input('cliente_id'));
+            $cliente = Cliente::findOrFail($request->cliente_id);
 
-            $puntos = MovimientoPunto::where('cliente_id', $cliente->id)->sum('puntos');
+            $puntos = MovimientoPunto::where('cliente_id', $cliente->id)
+                ->sum('puntos');
 
-            $premio = Premio::where('activo', 1)
-                ->where('puntos_requeridos', '<=', $puntos)
-                ->orderByDesc('puntos_requeridos')
-                ->first();
+            $premio = Premio::findOrFail($request->premio_id);
 
-            if (!$premio) {
-                return $this->response($request, false, 'No tiene suficientes puntos');
+            if ($puntos < $premio->puntos_requeridos) {
+                return $this->response(
+                    $request,
+                    false,
+                    'No tiene suficientes puntos para este premio'
+                );
             }
 
             $costo = $premio->puntos_requeridos;
 
             $user = auth()->user();
 
-            $sucursalId = $request->input('sucursal_id');
-            $sucursal = Sucursal::find($sucursalId);
-
-            if (!$sucursal) {
-                return $this->response($request, false, 'Sucursal no válida');
-            }
-
-            if ($cliente->sucursal->ciudad !== $sucursal->ciudad) {
-                return $this->response($request, false, 'No puedes canjear en otra ciudad');
-            }
-
             // 🚀 GUARDAR CANJE
             MovimientoPunto::create([
+                'jornada_id' => $request->jornada_id,
                 'cliente_id' => $cliente->id,
-                'sucursal_id' => $sucursalId,
-                'usuario_id' => $user ? $user->id : 1,
-                'ciudad' => $sucursal->ciudad,
+                'sucursal_id' => $cliente->sucursal_registro_id,
+                'usuario_id' => $user->id,
+                'ciudad' => $cliente->sucursal->ciudad,
                 'puntos' => -$costo,
                 'tipo' => 'canjeado',
                 'descripcion' => 'Canje: ' . $premio->nombre,
@@ -210,7 +205,9 @@ class MovimientoPuntoController extends Controller
 
             // 📲 WHATSAPP
             try {
+
                 if (env('TWILIO_ENABLED') && $cliente->recibe_notificaciones == 1) {
+
                     $twilio = new \App\Services\TwilioService();
 
                     $twilio->enviarWhatsApp(
@@ -218,21 +215,28 @@ class MovimientoPuntoController extends Controller
                         "🎂 Dulce Noviembre\n\n🎉 Canje realizado\nPremio: {$premio->nombre}\n\n¡Gracias por tu preferencia! 💖"
                     );
                 }
+
             } catch (\Exception $e) {
                 \Log::error('Error Twilio: ' . $e->getMessage());
             }
 
-            return $this->response($request, true, 'Canje realizado: ' . $premio->nombre . ' 🎉');
+            return $this->response(
+                $request,
+                true,
+                'Canje realizado: ' . $premio->nombre . ' 🎉'
+            );
 
         } catch (\Exception $e) {
-    return response()->json([
-        'error' => true,
-        'message' => $e->getMessage()
-    ], 500);
-}
 
-        
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ], 500);
+
+        }
     }
+
+
 
     private function response($request, $success, $message)
     {

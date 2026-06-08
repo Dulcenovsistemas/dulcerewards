@@ -63,6 +63,11 @@ Route::get('/validar-cliente/{token}', function ($token) {
     return response()->json($cliente);
 });
 
+use App\Http\Controllers\JornadaController;
+
+Route::resource('jornadas', JornadaController::class);
+
 Route::middleware('auth')->get('/validar-cliente/{token}', [MovimientoPuntoController::class, 'validarCliente']);
 
 require __DIR__.'/auth.php';
+

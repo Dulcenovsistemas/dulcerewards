@@ -80,6 +80,7 @@ class ClienteController extends Controller
             'empresa_nombre' => $request->empresa_nombre,
             'recibe_notificaciones' => $request->has('recibe_notificaciones'),
             'sucursal_registro_id' => $request->sucursal_registro_id,
+            'jornada_id' => $request->jornada_id,
         ]);
 
         // 📲 WHATSAPP BIENVENIDA
@@ -108,18 +109,17 @@ class ClienteController extends Controller
     /**
      * Display the specified resource.
      */
+
     public function show($id)
     {
         $cliente = Cliente::with('sucursal')->findOrFail($id);
 
         $puntos = MovimientoPunto::where('cliente_id', $id)->sum('puntos');
 
-        // TODOS los premios (para mostrarlos en la vista)
         $premios = Premio::where('activo', 1)
             ->orderBy('puntos_requeridos')
             ->get();
 
-        // SOLO el premio que le toca (exacto)
         $premioActual = $premios->firstWhere('puntos_requeridos', $puntos);
 
         $movimientos = MovimientoPunto::where('cliente_id', $id)
@@ -131,15 +131,19 @@ class ClienteController extends Controller
             ->latest()
             ->get();
 
+        $sucursales = Sucursal::orderBy('nombre')->get();
+
         return view('clientes.show', compact(
             'cliente',
             'puntos',
             'premios',
             'premioActual',
             'movimientos',
-            'canjes'
+            'canjes',
+            'sucursales'
         ));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -208,5 +212,9 @@ class ClienteController extends Controller
         return redirect()->route('clientes.index')
             ->with('success', 'Cliente eliminado correctamente 🗑️');
     }
+
+
+    
+    
     
 }

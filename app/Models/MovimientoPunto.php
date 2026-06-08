@@ -11,6 +11,7 @@ class MovimientoPunto extends Model
 
         protected $fillable = [
         'cliente_id',
+        'jornada_id',
         'sucursal_id',
         'usuario_id',
         'ciudad',
@@ -33,4 +34,10 @@ class MovimientoPunto extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function jornada()
+    {
+        return $this->belongsTo(Jornada::class);
+    }
+    
 }

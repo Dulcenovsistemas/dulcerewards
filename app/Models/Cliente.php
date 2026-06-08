@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 class Cliente extends Model
 {
     protected $fillable = [
+        'jornada_id',
         'nombre',
         'telefono',
         'fecha_nacimiento',
@@ -16,6 +17,7 @@ class Cliente extends Model
         'recibe_notificaciones',
         'qr_token',
         'sucursal_registro_id',
+        
     ];
 
 
@@ -34,5 +36,10 @@ class Cliente extends Model
     public function movimientos()
     {
         return $this->hasMany(MovimientoPunto::class);
+    }
+
+    public function jornada()
+    {
+        return $this->belongsTo(Jornada::class);
     }
 }
