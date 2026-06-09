@@ -16,11 +16,24 @@ class ClienteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $clientes = Cliente::all();
-        return view('clientes.index', compact('clientes'));
+  public function index()
+{
+    if (auth()->user()->is_admin) {
+
+        $clientes = Cliente::with('sucursal')->get();
+
+    } else {
+
+        $ciudad = auth()->user()->sucursal->ciudad;
+
+        $clientes = Cliente::whereHas('sucursal', function ($query) use ($ciudad) {
+            $query->where('ciudad', $ciudad);
+        })->get();
+
     }
+
+    return view('clientes.index', compact('clientes'));
+}
 
     /**
      * Show the form for creating a new resource.
