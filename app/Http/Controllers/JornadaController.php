@@ -15,29 +15,43 @@ class JornadaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $jornadas = Jornada::with(['usuario', 'sucursal'])
-            ->latest('fecha')
-            ->latest('id')
-            ->paginate(15);
+public function index()
+{
+    $query = Jornada::with(['usuario', 'sucursal']);
 
-        $jornadaAbierta = Jornada::where('estado', 'abierta')
+    if (!auth()->user()->is_admin) {
+        $query->where('sucursal_id', auth()->user()->sucursal_id);
+    }
+
+    $jornadas = $query
+        ->latest('fecha')
+        ->latest('id')
+        ->paginate(15);
+
+    $jornadaAbierta = auth()->user()->is_admin
+        ? Jornada::where('estado', 'abierta')->exists()
+        : Jornada::where('estado', 'abierta')
+            ->where('sucursal_id', auth()->user()->sucursal_id)
             ->exists();
 
-        return view('jornadas.index', compact(
-            'jornadas',
-            'jornadaAbierta'
-        ));
-    }
+    return view('jornadas.index', compact(
+        'jornadas',
+        'jornadaAbierta'
+    ));
+}
 
     /**
      * Show the form for creating a new resource.
      */
-  public function create()
+public function create()
 {
-    $jornadaAbierta = Jornada::where('estado', 'abierta')
-        ->exists();
+    $query = Jornada::where('estado', 'abierta');
+
+    if (!auth()->user()->is_admin) {
+        $query->where('sucursal_id', auth()->user()->sucursal_id);
+    }
+
+    $jornadaAbierta = $query->exists();
 
     if ($jornadaAbierta) {
 
