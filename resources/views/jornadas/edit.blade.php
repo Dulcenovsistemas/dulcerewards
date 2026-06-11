@@ -345,138 +345,138 @@
 
     <!-- MODAL -->
 
-<div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
-
-    <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
-
-        <!-- TITULO -->
-        <h2 class="text-white text-lg font-semibold mb-2">
-            Registrar compra
-        </h2>
-
-        <p class="text-sm text-gray-400 mb-4">
-            ¿Cómo deseas identificar al cliente?
-        </p>
-
-        <!-- NOMBRE CLIENTE (modo tabla) -->
-        <p id="clienteNombre" class="text-white text-sm mb-3 hidden"></p>
-
-        <!-- OPCIONES (solo cuando NO hay cliente seleccionado) -->
-        <div id="opcionesIdentificacion" class="grid grid-cols-1 gap-4">
-
-            <!-- ESCANEAR -->
-            <button onclick="iniciarScanner()"
-                class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
-                <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 text-xl">
-                    📷
-                </div>
-                <div class="text-left">
-                    <p class="text-white font-medium">Escanear QR</p>
-                    <p class="text-xs text-gray-400">Usar cámara del dispositivo</p>
-                </div>
-            </button>
-
-            <div id="qr-reader" class="mt-4 hidden w-full" style="min-height: 250px;"></div>
-
-            <!-- TELÉFONO -->
-            <button onclick="mostrarTelefono()"
-                class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
-                <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-green-500/20 text-green-400 text-xl">
-                    📱
-                </div>
-                <div class="text-left">
-                    <p class="text-white font-medium">Ingresar teléfono</p>
-                    <p class="text-xs text-gray-400">Buscar cliente manualmente</p>
-                </div>
-            </button>
-
-        </div>
-
-        <!-- FORM -->
-        <div id="formTelefono" class="mt-6 hidden">
-
-            <form action="{{ route('movimientos.store') }}" method="POST" class="space-y-3">
-                @csrf
-
-                <input
-                    type="hidden"
-                    name="jornada_id"
-                    value="{{ $jornada->id }}">
-
-                {{ $jornada->id }}
-
-                <!-- 🔥 cliente seleccionado (modo tabla) -->
-                <input type="hidden" name="cliente_id" id="clienteSeleccionado">
-
-                <!-- 🔥 teléfono (modo manual) -->
-                <div id="inputTelefono">
-                    <input type="text" name="telefono"
-                        class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
-                        placeholder="52..." value="52">
-                </div>
-
-                <!-- cantidad -->
-                <input type="number" name="cantidad"
-                    class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
-                    placeholder="Número de pasteles" required>
-
-                @if(auth()->user()->is_admin)
-                <select name="sucursal_id"
-                    class="w-full bg-white/5 border border-white/10 text-black px-4 py-2 rounded-lg mb-3"
-                    required>
-
-                    <option value="">Seleccionar sucursal</option>
-
-                    @foreach($sucursales as $sucursal)
-                        <option value="{{ $sucursal->id }}">
-                            {{ $sucursal->nombre }}
-                        </option>
-                    @endforeach
-
-                </select>
-                @endif
-
-                <p class="text-xs text-gray-400">
-                    ⚠️ Los pasteles minis no cuentan
-                </p>
-
-                <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
-                    Confirmar
-                </button>
-
-            </form>
-
-        </div>
-
-        <!-- CERRAR -->
-        <button onclick="cerrarModal()" class="mt-6 text-gray-400 text-sm hover:text-white">
-            Cancelar
-        </button>
-
-    </div>
-</div>
-
-<div id="modalCanje" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
+    <div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
 
         <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
 
-            <h2 class="text-white text-lg font-semibold mb-4">
-                Validar cliente para canje
+            <!-- TITULO -->
+            <h2 class="text-white text-lg font-semibold mb-2">
+                Registrar compra
             </h2>
 
             <p class="text-sm text-gray-400 mb-4">
-                Escanea el código QR del cliente
+                ¿Cómo deseas identificar al cliente?
             </p>
 
-            <div id="qr-reader-canje" class="w-full" style="min-height:250px;"></div>
+            <!-- NOMBRE CLIENTE (modo tabla) -->
+            <p id="clienteNombre" class="text-white text-sm mb-3 hidden"></p>
 
-            <button onclick="cerrarModalCanje()" class="mt-4 text-gray-400 text-sm hover:text-white">
+            <!-- OPCIONES (solo cuando NO hay cliente seleccionado) -->
+            <div id="opcionesIdentificacion" class="grid grid-cols-1 gap-4">
+
+                <!-- ESCANEAR -->
+                <button onclick="iniciarScanner()"
+                    class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
+                    <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 text-xl">
+                        📷
+                    </div>
+                    <div class="text-left">
+                        <p class="text-white font-medium">Escanear QR</p>
+                        <p class="text-xs text-gray-400">Usar cámara del dispositivo</p>
+                    </div>
+                </button>
+
+                <div id="qr-reader" class="mt-4 hidden w-full" style="min-height: 250px;"></div>
+
+                <!-- TELÉFONO -->
+                <button onclick="mostrarTelefono()"
+                    class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition border border-white/10">
+                    <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-green-500/20 text-green-400 text-xl">
+                        📱
+                    </div>
+                    <div class="text-left">
+                        <p class="text-white font-medium">Ingresar teléfono</p>
+                        <p class="text-xs text-gray-400">Buscar cliente manualmente</p>
+                    </div>
+                </button>
+
+            </div>
+
+            <!-- FORM -->
+            <div id="formTelefono" class="mt-6 hidden">
+
+                <form action="{{ route('movimientos.store') }}" method="POST" class="space-y-3">
+                    @csrf
+
+                    <input
+                        type="hidden"
+                        name="jornada_id"
+                        value="{{ $jornada->id }}">
+
+                    {{ $jornada->id }}
+
+                    <!-- 🔥 cliente seleccionado (modo tabla) -->
+                    <input type="hidden" name="cliente_id" id="clienteSeleccionado">
+
+                    <!-- 🔥 teléfono (modo manual) -->
+                    <div id="inputTelefono">
+                        <input type="text" name="telefono"
+                            class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
+                            placeholder="52..." value="52">
+                    </div>
+
+                    <!-- cantidad -->
+                    <input type="number" name="cantidad"
+                        class="w-full bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg"
+                        placeholder="Número de pasteles" required>
+
+                    @if(auth()->user()->is_admin)
+                    <select name="sucursal_id"
+                        class="w-full bg-white/5 border border-white/10 text-black px-4 py-2 rounded-lg mb-3"
+                        required>
+
+                        <option value="">Seleccionar sucursal</option>
+
+                        @foreach($sucursales as $sucursal)
+                            <option value="{{ $sucursal->id }}">
+                                {{ $sucursal->nombre }}
+                            </option>
+                        @endforeach
+
+                    </select>
+                    @endif
+
+                    <p class="text-xs text-gray-400">
+                        ⚠️ Los pasteles minis no cuentan
+                    </p>
+
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
+                        Confirmar
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- CERRAR -->
+            <button onclick="cerrarModal()" class="mt-6 text-gray-400 text-sm hover:text-white">
                 Cancelar
             </button>
 
         </div>
-
     </div>
+
+    <div id="modalCanje" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50">
+
+            <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
+
+                <h2 class="text-white text-lg font-semibold mb-4">
+                    Validar cliente para canje
+                </h2>
+
+                <p class="text-sm text-gray-400 mb-4">
+                    Escanea el código QR del cliente
+                </p>
+
+                <div id="qr-reader-canje" class="w-full" style="min-height:250px;"></div>
+
+                <button onclick="cerrarModalCanje()" class="mt-4 text-gray-400 text-sm hover:text-white">
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
 
 <script>
 
