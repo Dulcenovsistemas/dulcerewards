@@ -120,7 +120,19 @@ public function create()
      */
     public function edit(Jornada $jornada)
     {
-        $clientes = Cliente::all();
+        if (auth()->user()->is_admin) {
+
+            $clientes = Cliente::with('sucursal')->get();
+
+        } else {
+
+            $ciudad = auth()->user()->sucursal->ciudad;
+
+            $clientes = Cliente::whereHas('sucursal', function ($query) use ($ciudad) {
+                $query->where('ciudad', $ciudad);
+            })->get();
+
+        }
 
         $movimientos = MovimientoPunto::with([
             'cliente',

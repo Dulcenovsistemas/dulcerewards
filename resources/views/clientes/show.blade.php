@@ -5,7 +5,7 @@
 @section('content')
 
 <div class="max-w-7xl mx-auto">
-        {{ request('jornada') }}
+ 
 
     <!-- HEADER -->
     <div class="flex justify-between items-center mb-6">
