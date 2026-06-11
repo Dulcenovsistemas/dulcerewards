@@ -6,150 +6,174 @@
 
     <title>Dulce Rewards</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+
+        body{
+            font-family:'Montserrat',sans-serif;
         }
 
-        .animate-fade-in {
-            animation: fadeIn 0.8s ease-out;
+        .title-font{
+            font-family:'Cormorant Garamond',serif;
         }
 
-        .animate-fade-in-delay {
-            animation: fadeIn 1.2s ease-out;
+        .bg-dulce{
+            background:
+            radial-gradient(circle at top left,
+            rgba(255,255,255,.12),
+            transparent 35%),
+
+            radial-gradient(circle at bottom right,
+            rgba(255,255,255,.08),
+            transparent 30%),
+
+            linear-gradient(
+            135deg,
+            #C57B91 0%,
+            #B66F86 45%,
+            #A8657C 100%
+            );
         }
+
+        @keyframes float {
+            0%{transform:translateY(0px);}
+            50%{transform:translateY(-12px);}
+            100%{transform:translateY(0px);}
+        }
+
+        .float{
+            animation:float 5s ease-in-out infinite;
+        }
+
     </style>
 
 </head>
 
-<body class="bg-[#0b0b0f] min-h-screen">
+<body class="bg-dulce min-h-screen overflow-x-hidden">
 
-<div class="relative min-h-screen flex items-center justify-center overflow-hidden">
+<div class="relative min-h-screen">
 
-    <!-- 🎨 Glow más "dulce" -->
-    <div class="absolute inset-0">
-        <div class="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-pink-500/20 blur-[120px]"></div>
-        <div class="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-purple-500/20 blur-[120px]"></div>
-    </div>
+    <!-- Navbar -->
+    <header class="absolute top-0 left-0 w-full z-20">
 
-    <div class="relative z-10 max-w-6xl w-full px-6">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
 
-        <!-- Navbar -->
-        <div class="flex justify-between items-center mb-16">
-            <div class="text-white">
-                <h1 class="text-lg font-semibold tracking-wide">
-                    Dulce Rewards
-                </h1>
-                <p class="text-xs text-white/50">
-                    by Dulce Noviembre
-                </p>
-            </div>
+            <img
+                src="{{ asset('images/dulcerewards.png') }}"
+                alt="Dulce Rewards"
+                class="h-10 md:h-12">
 
             @if (Route::has('login'))
+
                 @auth
+
                     <a href="{{ url('/dashboard') }}"
-                       class="text-sm text-white/80 hover:text-white transition">
-                        Dashboard →
+                       class="bg-white text-[#b56f86] px-6 py-2 rounded-full font-medium hover:scale-105 transition">
+                        Dashboard
                     </a>
+
                 @else
+
                     <a href="{{ route('login') }}"
-                       class="text-sm text-white/80 hover:text-white transition">
-                        Iniciar sesión →
+                       class="border border-white/40 text-white px-6 py-2 rounded-full hover:bg-white hover:text-[#b56f86] transition">
+                        Iniciar sesión
                     </a>
+
                 @endauth
+
             @endif
+
         </div>
 
-        <!-- Hero -->
-        <div class="grid md:grid-cols-2 gap-12 items-center">
+    </header>
 
-            <!-- Texto -->
-            <div class="text-white space-y-6 animate-fade-in">
+   
+<section class="min-h-screen flex items-center overflow-hidden">
 
-                <h2 class="text-4xl md:text-5xl font-bold leading-tight">
-                    Convierte cada compra en
-                    <span class="text-pink-400">recompensas</span>
-                </h2>
+        <div class="max-w-7xl mx-auto px-6 w-full">
 
-                <p class="text-gray-400 text-lg">
-                    Gestiona clientes, acumula puntos y premia la lealtad.
-                    Todo en una plataforma diseñada para hacer crecer tu negocio.
-                </p>
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
 
-                <div class="flex gap-4 pt-4">
-                    @auth
-                        <a href="{{ url('/dashboard') }}"
-                           class="bg-pink-500 hover:bg-pink-600 px-6 py-3 rounded-xl font-medium transition shadow-lg shadow-pink-500/30">
-                            Ir al sistema
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}"
-                           class="bg-pink-500 hover:bg-pink-600 px-6 py-3 rounded-xl font-medium transition shadow-lg shadow-pink-500/30">
-                            Iniciar sesión
-                        </a>
-                    @endauth
-                </div>
+                <!-- Texto -->
+                <div class="text-center lg:text-left">
 
-            </div>
+                    <p class="text-white/90 tracking-[0.3em] uppercase text-sm mb-4">
+                        Bienvenido a
+                    </p>
 
-            <!-- Card preview -->
-            <div class="relative animate-fade-in-delay">
+                    <h1 class="title-font text-white text-6xl md:text-7xl lg:text-8xl leading-none font-light">
+                        Dulce
+                        <br>
+                        Rewards
+                    </h1>
 
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
+                    <p class="text-white/80 text-lg md:text-xl max-w-lg mt-8 mx-auto lg:mx-0 leading-relaxed">
+                        Acumula puntos en cada compra y canjéalos por descuentos,
+                        beneficios exclusivos y recompensas diseñadas especialmente para ti.
+                    </p>
 
-                    <h3 class="text-white font-semibold mb-4">
-                        Actividad reciente
-                    </h3>
+                    <div class="mt-10">
 
-                    <div class="space-y-3 text-sm text-gray-300">
+                        @auth
 
-                        <div class="flex justify-between">
-                            <span>Cliente registrado</span>
-                            <span class="text-green-400">+1</span>
-                        </div>
+                            <a href="{{ url('/dashboard') }}"
+                               class="inline-flex bg-white text-[#b56f86] px-8 py-4 rounded-full font-medium shadow-xl hover:scale-105 transition">
+                                Entrar al sistema
+                            </a>
 
-                        <div class="flex justify-between">
-                            <span>Puntos acumulados</span>
-                            <span class="text-pink-400">+120 pts</span>
-                        </div>
+                        @else
 
-                        <div class="flex justify-between">
-                            <span>Premio canjeado</span>
-                            <span class="text-white">Pastel gratis</span>
-                        </div>
+                            <a href="{{ route('login') }}"
+                               class="inline-flex bg-white text-[#b56f86] px-8 py-4 rounded-full font-medium shadow-xl hover:scale-105 transition">
+                                Comenzar
+                            </a>
+
+                        @endauth
 
                     </div>
 
-                    <div class="mt-6">
-                        <div class="text-xs text-gray-400 mb-1">
-                            Progreso del cliente
-                        </div>
-
-                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div class="h-full w-3/4 bg-pink-500"></div>
-                        </div>
-                    </div>
-
                 </div>
+
+              <!-- Mockup -->
+
+<div class="relative h-[700px] overflow-visible">
+
+    <img
+        src="{{ asset('images/celular.png') }}"
+        alt="App Dulce Rewards"
+        class="
+            absolute
+            bottom-[-350px]
+            right-0
+            w-[850px]
+            max-w-none
+        ">
+
+</div>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="absolute bottom-0 left-0 w-full pb-6">
+
+        <div class="max-w-7xl mx-auto px-6">
+
+            <p class="text-white/60 text-xs text-center">
+                Programa de lealtad de Dulce Noviembre.
+                Los beneficios, promociones y recompensas pueden variar según disponibilidad.
+            </p>
+
+        </div>
+
+    </footer>
 
 </div>
 

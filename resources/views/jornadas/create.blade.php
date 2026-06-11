@@ -40,23 +40,47 @@
 
             </div>
 
-            {{-- Sucursal --}}
+
+           {{-- Sucursal --}}
             <div>
 
                 <label class="block text-sm text-gray-400 mb-2">
                     Sucursal
                 </label>
 
-                <select
-                    name="sucursal_id"
-                    required
-                    class="w-full rounded-xl bg-white/5 border border-white/10 text-white px-4 py-3">
+                @if(auth()->user()->is_admin)
 
-                    <option value="{{ auth()->user()->sucursal_id }}" selected>
-                        {{ auth()->user()->sucursal->nombre }}
-                    </option>
+                    <select
+                        name="sucursal_id"
+                        required
+                        class="w-full rounded-xl bg-white/5 border border-white/10 text-black px-4 py-3">
 
-                </select>
+                        <option value="">
+                            Selecciona una sucursal
+                        </option>
+
+                        @foreach($sucursales as $sucursal)
+                            <option value="{{ $sucursal->id }}">
+                                {{ $sucursal->nombre }}
+                            </option>
+                        @endforeach
+
+                    </select>
+
+                @else
+
+                    <select
+                        name="sucursal_id"
+                        required
+                        class="w-full rounded-xl bg-white/5 border border-white/10 text-black px-4 py-3">
+
+                        <option value="{{ auth()->user()->sucursal_id }}" selected>
+                            {{ auth()->user()->sucursal->nombre }}
+                        </option>
+
+                    </select>
+
+                @endif
 
             </div>
 

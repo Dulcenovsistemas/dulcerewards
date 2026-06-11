@@ -55,6 +55,7 @@ public function create()
 
     if ($jornadaAbierta) {
 
+       
         return redirect()
             ->route('jornadas.index')
             ->with(

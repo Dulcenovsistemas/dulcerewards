@@ -8,10 +8,44 @@
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+
+        body{
+            font-family:'Montserrat',sans-serif;
+        }
+
+        .title-font{
+            font-family:'Cormorant Garamond',serif;
+        }
+
+        .bg-dulce{
+            background:
+            radial-gradient(circle at top left,
+            rgba(255,255,255,.12),
+            transparent 35%),
+
+            radial-gradient(circle at bottom right,
+            rgba(255,255,255,.08),
+            transparent 30%),
+
+            linear-gradient(
+            135deg,
+            #C57B91 0%,
+            #B66F86 45%,
+            #A8657C 100%
+            );
+        }
+
+        .card-glass{
+            background:rgba(255,255,255,.12);
+            backdrop-filter:blur(24px);
+            border:1px solid rgba(255,255,255,.15);
+        }
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -29,9 +63,10 @@
     </style>
 </head>
 
-<body class="bg-[#0b0b0f] min-h-screen flex items-center justify-center">
+<body class="bg-dulce min-h-screen flex items-center justify-center p-6">
 
 <div class="relative w-full max-w-md px-6">
+
 
     <!-- Glow -->
     <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-pink-500/20 blur-[120px]"></div>
@@ -39,20 +74,21 @@
     <!-- Card -->
     <div class="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl animate-fade-in">
 
-        <!-- Logo / Branding -->
-        <div class="text-center mb-6">
-            <h1 class="text-white text-xl font-semibold">Dulce Rewards</h1>
-            <p class="text-xs text-white/50">by Dulce Noviembre</p>
-        </div>
+    
 
-        <!-- Mensaje -->
-        <div class="text-center mb-6">
-            <h2 class="text-white text-2xl font-bold mb-2">
-                Bienvenido de nuevo
-            </h2>
-            <p class="text-gray-400 text-sm">
-                Inicia sesión para gestionar puntos y recompensas
+        <div class="text-center mb-8">
+
+            <img
+                src="{{ asset('images/dulcerewards.png') }}"
+                alt="Dulce Rewards"
+                class="h-20 mx-auto mb-6">
+
+
+            <p class="text-white/70 mt-3">
+                Accede a tu cuenta para consultar puntos,
+                recompensas y beneficios exclusivos.
             </p>
+
         </div>
 
         <!-- Session Status -->
@@ -105,22 +141,17 @@
                     Recordarme
                 </label>
 
-                @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}"
-                       class="text-pink-400 hover:text-pink-300 transition">
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                @endif
+                
 
             </div>
 
             <!-- Button -->
-            <button 
-                type="submit"
-                class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2.5 rounded-lg font-medium transition shadow-lg shadow-pink-500/30"
-            >
-                Iniciar sesión
-            </button>
+           <button
+    type="submit"
+    class="w-full bg-white text-[#B66F86] py-3 rounded-xl font-medium hover:scale-[1.02] transition shadow-xl"
+>
+    Iniciar sesión
+</button>
 
         </form>
 
