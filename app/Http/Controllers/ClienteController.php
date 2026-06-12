@@ -65,7 +65,7 @@ class ClienteController extends Controller
             'telefono' => [
                 'required',
                 'unique:clientes,telefono',
-                'regex:/^52\d{10}$/'
+                'regex:/^(52\d{10}|1\d{10})$/'
             ],
 
             'fecha_nacimiento' => 'nullable|date',
@@ -74,7 +74,7 @@ class ClienteController extends Controller
             'sucursal_registro_id' => 'required|exists:sucursales,id',
 
             ], [
-            'telefono.regex' => 'El teléfono debe iniciar con 52 y tener exactamente 12 dígitos.'
+            'telefono.regex' => 'El teléfono debe iniciar con 52 (México) o 1 (Estados Unidos) y contener 10 dígitos después de la lada.'
         ]);
 
         // 🔍 NORMALIZAR TELÉFONO (opcional pero recomendado)

@@ -55,7 +55,7 @@
                     required>
 
                 <p class="text-xs text-gray-500 mt-1">
-                    Incluye lada del país (ej. 52 para México).
+                    Incluye lada del país (ej. 52 para México o 1 para USA).
                 </p>
             </div>
 
