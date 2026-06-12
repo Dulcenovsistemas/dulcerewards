@@ -17,6 +17,7 @@ class JornadaController extends Controller
      */
 public function index()
 {
+    dd(auth()->user()->is_admin);
     $query = Jornada::with(['usuario', 'sucursal']);
 
     if (!auth()->user()->is_admin) {
