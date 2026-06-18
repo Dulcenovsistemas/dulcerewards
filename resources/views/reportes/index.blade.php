@@ -57,25 +57,12 @@
                     class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-white">
             </div>
 
-            <!-- Botón -->
-            <div class="flex items-end">
-
-                <button
-                    type="submit"
-                    class="w-full bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl font-medium transition">
-
-                    <i class="bi bi-search me-2"></i>
-                    Consultar
-
-                </button>
-
-            </div>
-
+           
         </div>
 
     </form>
 
-</div>
+
 
 
     </div>
@@ -130,11 +117,22 @@
 
     <div class="p-4 border-b border-white/10 flex justify-between items-center">
 
-        <h2 class="text-white font-semibold">
-            Reporte por sucursal
-        </h2>
+    <h2 class="text-white font-semibold">
+        Reporte por sucursal
+    </h2>
 
-    </div>
+    <a href="{{ route('reportes.exportar', [
+            'fecha_inicio' => request('fecha_inicio'),
+            'fecha_fin' => request('fecha_fin')
+        ]) }}"
+       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm">
+
+        <i class="bi bi-file-earmark-excel"></i>
+        Exportar Excel
+
+    </a>
+
+</div>
 
     <div class="max-h-[60vh] overflow-y-auto">
 
