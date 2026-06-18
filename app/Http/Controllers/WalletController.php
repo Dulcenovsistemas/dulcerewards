@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class WalletController extends Controller
 {
-    public function show($token)
+   public function show($token)
 {
     $cliente = Cliente::where('qr_token', $token)
         ->with('sucursal')
@@ -20,9 +20,27 @@ class WalletController extends Controller
 
     $puntos = $movimientosQuery->sum('puntos');
 
-    $premios = Premio::where('activo', 1)
-        ->orderBy('puntos_requeridos')
-        ->get();
+    // 🔥 Premios por ciudad
+    $ciudad = $cliente->sucursal->ciudad;
+
+    $tienePremiosLocales = Premio::where('activo', 1)
+        ->where('ciudad', $ciudad)
+        ->exists();
+
+    if ($tienePremiosLocales) {
+
+        $premios = Premio::where('activo', 1)
+            ->where('ciudad', $ciudad)
+            ->orderBy('puntos_requeridos')
+            ->get();
+
+    } else {
+
+        $premios = Premio::where('activo', 1)
+            ->whereNull('ciudad')
+            ->orderBy('puntos_requeridos')
+            ->get();
+    }
 
     $premioActual = $premios->firstWhere('puntos_requeridos', $puntos);
 
@@ -38,11 +56,16 @@ class WalletController extends Controller
     $diasRestantes = null;
 
     if ($primerMovimiento) {
-        $vigencia = Carbon::parse($primerMovimiento->created_at)->addYear();
-        $vigenciaVencida = now()->greaterThan($vigencia);
-        $diasRestantes = max(0, now()->diffInDays($vigencia, false));
 
-        // 👉 si quieres reflejar vencimiento en UI
+        $vigencia = Carbon::parse($primerMovimiento->created_at)->addYear();
+
+        $vigenciaVencida = now()->greaterThan($vigencia);
+
+        $diasRestantes = max(
+            0,
+            now()->diffInDays($vigencia, false)
+        );
+
         if ($vigenciaVencida) {
             $puntos = 0;
         }
@@ -59,6 +82,7 @@ class WalletController extends Controller
         'diasRestantes'
     ));
 }
+
 
      public function perfil($token)
     {

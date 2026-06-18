@@ -132,40 +132,59 @@ class ClienteController extends Controller
      * Display the specified resource.
      */
 
-    public function show($id)
-    {
-        $cliente = Cliente::with('sucursal')->findOrFail($id);
+   public function show($id)
+{
+    $cliente = Cliente::with('sucursal')->findOrFail($id);
 
-        $puntos = MovimientoPunto::where('cliente_id', $id)->sum('puntos');
+    $puntos = MovimientoPunto::where('cliente_id', $id)->sum('puntos');
+
+    $ciudad = $cliente->sucursal->ciudad;
+
+    $tienePremiosLocales = Premio::where('activo', 1)
+        ->where('ciudad', $ciudad)
+        ->exists();
+
+    if ($tienePremiosLocales) {
 
         $premios = Premio::where('activo', 1)
+            ->where('ciudad', $ciudad)
             ->orderBy('puntos_requeridos')
             ->get();
 
-        $premioActual = $premios->firstWhere('puntos_requeridos', $puntos);
+    } else {
 
-        $movimientos = MovimientoPunto::where('cliente_id', $id)
-            ->latest()
+        $premios = Premio::where('activo', 1)
+            ->whereNull('ciudad')
+            ->orderBy('puntos_requeridos')
             ->get();
-
-        $canjes = MovimientoPunto::where('cliente_id', $id)
-            ->where('tipo', 'canje')
-            ->latest()
-            ->get();
-
-        $sucursales = Sucursal::orderBy('nombre')->get();
-
-        return view('clientes.show', compact(
-            'cliente',
-            'puntos',
-            'premios',
-            'premioActual',
-            'movimientos',
-            'canjes',
-            'sucursales'
-        ));
     }
 
+    $premioActual = $premios->firstWhere(
+        'puntos_requeridos',
+        $puntos
+    );
+
+    $movimientos = MovimientoPunto::where('cliente_id', $id)
+        ->latest()
+        ->get();
+
+    $canjes = MovimientoPunto::where('cliente_id', $id)
+        ->where('tipo', 'canje')
+        ->latest()
+        ->get();
+
+    $sucursales = Sucursal::orderBy('nombre')->get();
+
+    return view('clientes.show', compact(
+        'cliente',
+        'puntos',
+        'premios',
+        'premioActual',
+        'movimientos',
+        'canjes',
+        'sucursales'
+    ));
+}
 
     /**
      * Show the form for editing the specified resource.
