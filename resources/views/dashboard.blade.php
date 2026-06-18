@@ -237,15 +237,15 @@
 
                 </div>
 
-                <a href="#"
-                   class="flex items-center justify-between bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-4 transition">
+                <a href="{{ route('reportes.index') }}"
+                    class="flex items-center justify-between bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-4 transition">
 
-                    <div class="flex items-center gap-3">
-                        <i class="bi bi-file-earmark-bar-graph text-[#FFD9E4]"></i>
-                        <span class="text-white">Generar reportes</span>
-                    </div>
+                        <div class="flex items-center gap-3">
+                            <i class="bi bi-file-earmark-bar-graph text-[#FFD9E4]"></i>
+                            <span class="text-white">Generar reportes</span>
+                        </div>
 
-                    <i class="bi bi-chevron-right text-gray-500"></i>
+                        <i class="bi bi-chevron-right text-gray-500"></i>
 
                 </a>
 

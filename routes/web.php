@@ -74,5 +74,13 @@ Route::patch(
     [JornadaController::class, 'cerrar']
 )->name('jornadas.cerrar');
 
+use App\Http\Controllers\ReporteController;
+
+Route::get('/reportes', [ReporteController::class, 'index'])
+    ->name('reportes.index');
+
+Route::get('/reportes/exportar', [ReporteController::class, 'exportar'])
+    ->name('reportes.exportar');
+
 require __DIR__.'/auth.php';
 
