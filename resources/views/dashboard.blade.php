@@ -215,6 +215,7 @@
             </div>
 
             {{-- REPORTES --}}
+             @if(auth()->user()->rol === 'admin')
             <div class="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 transition-all duration-300 hover:-translate-y-1 hover:border-pink-300/20 hover:shadow-[0_20px_60px_rgba(255,255,255,0.05)]">
 
                 <div class="flex items-center gap-4 mb-6">
@@ -250,6 +251,7 @@
                 </a>
 
             </div>
+            @endif
 
         </div>
 

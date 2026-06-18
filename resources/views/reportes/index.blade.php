@@ -202,16 +202,7 @@
 
 </div>
 
-<a href="{{ route('reportes.exportar', [
-        'fecha_inicio' => request('fecha_inicio'),
-        'fecha_fin' => request('fecha_fin')
-    ]) }}"
-   class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm">
 
-    <i class="bi bi-file-earmark-excel"></i>
-    Exportar Excel
-
-</a>
 
 </div>
 
