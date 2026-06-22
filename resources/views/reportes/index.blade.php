@@ -57,6 +57,14 @@
                     class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-white">
             </div>
 
+            <div class="flex items-end">
+                <button
+                    type="submit"
+                    class="w-full bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl font-medium transition">
+                    Consultar
+                </button>
+            </div>
+
            
         </div>
 
