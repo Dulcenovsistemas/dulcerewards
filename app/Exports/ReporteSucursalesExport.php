@@ -23,22 +23,51 @@ class ReporteSucursalesExport implements FromCollection, WithHeadings
         $this->fin = $fin;
     }
 
-    public function collection()
-    {
-        return Sucursal::get()->map(function ($sucursal) {
+   public function collection()
+{
+    return Sucursal::get()->map(function ($sucursal) {
 
-            return [
-                $sucursal->nombre,
-                Cliente::where('sucursal_registro_id', $sucursal->id)->count(),
-                MovimientoPunto::where('sucursal_id', $sucursal->id)
-                    ->where('tipo', 'acumulado')
-                    ->sum('puntos'),
-                MovimientoPunto::where('sucursal_id', $sucursal->id)
-                    ->where('tipo', 'canjeado')
-                    ->count(),
-            ];
-        });
-    }
+        $clientes = Cliente::where(
+            'sucursal_registro_id',
+            $sucursal->id
+        );
+
+        $puntos = MovimientoPunto::where(
+            'sucursal_id',
+            $sucursal->id
+        )->where('tipo', 'acumulado');
+
+        $canjes = MovimientoPunto::where(
+            'sucursal_id',
+            $sucursal->id
+        )->where('tipo', 'canjeado');
+
+        if ($this->inicio && $this->fin) {
+
+            $clientes->whereBetween('created_at', [
+                $this->inicio . ' 00:00:00',
+                $this->fin . ' 23:59:59'
+            ]);
+
+            $puntos->whereBetween('created_at', [
+                $this->inicio . ' 00:00:00',
+                $this->fin . ' 23:59:59'
+            ]);
+
+            $canjes->whereBetween('created_at', [
+                $this->inicio . ' 00:00:00',
+                $this->fin . ' 23:59:59'
+            ]);
+        }
+
+        return [
+            $sucursal->nombre,
+            $clientes->count(),
+            $puntos->sum('puntos'),
+            $canjes->count(),
+        ];
+    });
+}
 
     public function headings(): array
     {
