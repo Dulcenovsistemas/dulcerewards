@@ -103,7 +103,26 @@ class ClienteController extends Controller
             'recibe_notificaciones' => $request->has('recibe_notificaciones'),
             'sucursal_registro_id' => $request->sucursal_registro_id,
             'jornada_id' => $request->jornada_id,
+            'registrar_puntos' => 'nullable',
         ]);
+
+        // ⭐ REGISTRAR PRIMEROS PUNTOS
+            if ($request->registrar_puntos && $request->puntos_iniciales > 0) {
+
+            $sucursal = Sucursal::find($cliente->sucursal_registro_id);
+
+            MovimientoPunto::create([
+                'jornada_id' => $cliente->jornada_id,
+                'cliente_id' => $cliente->id,
+                'sucursal_id' => $cliente->sucursal_registro_id,
+                'usuario_id' => auth()->id(),
+                'ciudad' => $sucursal->ciudad,
+                'puntos' => $request->puntos_iniciales,
+                'tipo' => 'acumulado',
+                'descripcion' => $request->concepto_puntos ?? 'Registro inicial',
+            ]);
+
+        }
 
         // 📲 WHATSAPP BIENVENIDA
         try {
@@ -124,8 +143,14 @@ class ClienteController extends Controller
             // opcional: log
         }
         // 🎫 REDIRIGIR A TARJETA
-        return redirect()->route('clientes.index')
-            ->with('success', 'Cliente registrado correctamente 🎉');
+        return redirect()
+    ->route('clientes.create', [
+        'jornada' => $request->jornada_id
+    ])
+    ->with('cliente_creado', true)
+    ->with('cliente_id', $cliente->id)
+    ->with('cliente_nombre', $cliente->nombre)
+    ->with('jornada_id', $request->jornada_id);
     }
 
     /**
