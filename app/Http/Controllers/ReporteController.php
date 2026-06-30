@@ -15,15 +15,23 @@ use App\Models\Cliente;
 use App\Models\MovimientoPunto;
 use App\Models\Jornada;
 
-class ReporteController extends Controller
+class ReporteController extends Controller                                  
 {
 
-   public function index(Request $request)
+    public function index(Request $request)
 {
     $inicio = $request->fecha_inicio;
     $fin = $request->fecha_fin;
 
-    $reporte = Sucursal::get()->map(function ($sucursal) use ($inicio, $fin) {
+    // Si es administrador ve todas las sucursales,
+    // de lo contrario solo la que tiene asignada.
+    if (auth()->user()->is_admin) {
+        $sucursales = Sucursal::all();
+    } else {
+        $sucursales = collect([auth()->user()->sucursal]);
+    }
+
+    $reporte = $sucursales->map(function ($sucursal) use ($inicio, $fin) {
 
         $clientes = Cliente::where(
             'sucursal_registro_id',
@@ -60,16 +68,12 @@ class ReporteController extends Controller
 
         return [
             'nombre' => $sucursal->nombre,
-
             'clientes' => $clientes->count(),
-
             'puntos' => $puntos->sum('puntos'),
-
             'canjes' => $canjes->count(),
         ];
     });
 
-    // Totales para las tarjetas superiores
     $totalClientes = $reporte->sum('clientes');
     $totalPuntos = $reporte->sum('puntos');
     $totalCanjes = $reporte->sum('canjes');

@@ -52,4 +52,6 @@ protected $fillable = [
     {
         return $this->belongsTo(Sucursal::class);
     }
+
+    
 }
