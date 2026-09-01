@@ -14,13 +14,14 @@ class JornadasExport implements FromCollection, WithHeadings
             ->get()
             ->map(function ($jornada) {
                 return [
-                    'folio'      => $jornada->folio,
-                    'fecha'      => $jornada->fecha,
-                    'sucursal'   => $jornada->sucursal->nombre ?? '',
-                    'usuario'    => $jornada->usuario->name ?? '',
-                    'estado'     => $jornada->estado,
-                    'inicio'     => $jornada->hora_inicio,
-                    'fin'        => $jornada->hora_fin,
+                    'folio'          => $jornada->folio,
+                    'fecha'          => $jornada->fecha,
+                    'sucursal'       => $jornada->sucursal->nombre ?? '',
+                    'usuario'        => $jornada->usuario->name ?? '',
+                    'estado'         => $jornada->estado,
+                    'inicio'         => $jornada->hora_inicio,
+                    'fin'            => $jornada->hora_fin,
+                    'observaciones'  => $jornada->observaciones ?? '',
                 ];
             });
     }
@@ -35,6 +36,7 @@ class JornadasExport implements FromCollection, WithHeadings
             'Estado',
             'Hora Inicio',
             'Hora Fin',
+            'Observaciones',
         ];
     }
 }

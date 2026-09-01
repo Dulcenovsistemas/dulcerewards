@@ -23,51 +23,71 @@ class ReporteSucursalesExport implements FromCollection, WithHeadings
         $this->fin = $fin;
     }
 
-   public function collection()
-{
-    return Sucursal::get()->map(function ($sucursal) {
+    public function collection()
+    {
+        return Sucursal::get()->map(function ($sucursal) {
 
-        $clientes = Cliente::where(
-            'sucursal_registro_id',
-            $sucursal->id
-        );
+            $clientes = Cliente::where(
+                'sucursal_registro_id',
+                $sucursal->id
+            );
 
-        $puntos = MovimientoPunto::where(
-            'sucursal_id',
-            $sucursal->id
-        )->where('tipo', 'acumulado');
+            $puntos = MovimientoPunto::where(
+                'sucursal_id',
+                $sucursal->id
+            )->where('tipo', 'acumulado');
 
-        $canjes = MovimientoPunto::where(
-            'sucursal_id',
-            $sucursal->id
-        )->where('tipo', 'canjeado');
+            $canjes = MovimientoPunto::where(
+                'sucursal_id',
+                $sucursal->id
+            )->where('tipo', 'canjeado');
 
-        if ($this->inicio && $this->fin) {
+            // Jornadas de la sucursal
+            $jornadas = Jornada::where(
+                'sucursal_id',
+                $sucursal->id
+            );
 
-            $clientes->whereBetween('created_at', [
-                $this->inicio . ' 00:00:00',
-                $this->fin . ' 23:59:59'
-            ]);
+            if ($this->inicio && $this->fin) {
 
-            $puntos->whereBetween('created_at', [
-                $this->inicio . ' 00:00:00',
-                $this->fin . ' 23:59:59'
-            ]);
+                $clientes->whereBetween('created_at', [
+                    $this->inicio . ' 00:00:00',
+                    $this->fin . ' 23:59:59'
+                ]);
 
-            $canjes->whereBetween('created_at', [
-                $this->inicio . ' 00:00:00',
-                $this->fin . ' 23:59:59'
-            ]);
-        }
+                $puntos->whereBetween('created_at', [
+                    $this->inicio . ' 00:00:00',
+                    $this->fin . ' 23:59:59'
+                ]);
 
-        return [
-            $sucursal->nombre,
-            $clientes->count(),
-            $puntos->sum('puntos'),
-            $canjes->count(),
-        ];
-    });
-}
+                $canjes->whereBetween('created_at', [
+                    $this->inicio . ' 00:00:00',
+                    $this->fin . ' 23:59:59'
+                ]);
+
+                // Filtrar jornadas por fecha
+                $jornadas->whereBetween('fecha', [
+                    $this->inicio,
+                    $this->fin
+                ]);
+            }
+
+            // Obtener las observaciones de las jornadas
+            $observaciones = $jornadas
+                ->whereNotNull('observaciones')
+                ->where('observaciones', '!=', '')
+                ->pluck('observaciones')
+                ->implode(' | ');
+
+            return [
+                $sucursal->nombre,
+                $clientes->count(),
+                $puntos->sum('puntos'),
+                $canjes->count(),
+                $observaciones,
+            ];
+        });
+    }
 
     public function headings(): array
     {
@@ -76,6 +96,7 @@ class ReporteSucursalesExport implements FromCollection, WithHeadings
             'Clientes',
             'Puntos',
             'Canjes',
+            'Observaciones',
         ];
     }
 }
