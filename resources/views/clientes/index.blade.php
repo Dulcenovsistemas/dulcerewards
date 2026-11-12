@@ -55,6 +55,61 @@
 
     </div>
 
+
+<!-- FILTRO POR FECHA -->
+<form method="GET" action="{{ route('clientes.index') }}"
+      class="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 relative z-10">
+
+    <div class="flex flex-col md:flex-row md:items-end gap-4">
+
+        <div class="flex-1">
+            <label class="block text-xs text-gray-400 mb-2">
+                Fecha inicial
+            </label>
+            <input type="date"
+                   name="fecha_inicio"
+                   value="{{ request('fecha_inicio') }}"
+                   class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-pink-500 outline-none">
+        </div>
+
+        <div class="flex-1">
+            <label class="block text-xs text-gray-400 mb-2">
+                Fecha final
+            </label>
+            <input type="date"
+                   name="fecha_fin"
+                   value="{{ request('fecha_fin') }}"
+                   class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-pink-500 outline-none">
+        </div>
+
+        
+        <div class="flex flex-wrap gap-2">
+
+            <!-- FILTRAR -->
+            <button type="submit"
+                    class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-3 rounded-xl transition">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+
+            <!-- LIMPIAR -->
+            <a href="{{ route('clientes.index') }}"
+            class="bg-white/10 hover:bg-white/20 text-gray-300 px-5 py-3 rounded-xl transition">
+                <i class="bi bi-x-circle"></i> Limpiar
+            </a>
+
+            <!-- EXPORTAR EXCEL -->
+            <a href="{{ route('clientes.exportar', request()->only('fecha_inicio', 'fecha_fin')) }}"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl transition shadow-lg">
+                <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+            </a>
+
+        </div>
+
+
+    </div>
+</form>
+
+
     <!-- TABLA -->
     <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden relative z-10">
 

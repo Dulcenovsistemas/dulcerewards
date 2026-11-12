@@ -30,6 +30,12 @@ Route::resource('users', UserController::class);
 
 use App\Http\Controllers\ClienteController;
 
+// Exportar clientes
+Route::get('/clientes/exportar', [ClienteController::class, 'exportar'])
+    ->middleware('auth')
+    ->name('clientes.exportar');
+
+// Recursos de clientes
 Route::resource('clientes', ClienteController::class);
 
 use App\Http\Controllers\PremioController;
@@ -81,6 +87,8 @@ Route::get('/reportes', [ReporteController::class, 'index'])
 
 Route::get('/reportes/exportar', [ReporteController::class, 'exportar'])
     ->name('reportes.exportar');
+
+
 
 require __DIR__.'/auth.php';
 

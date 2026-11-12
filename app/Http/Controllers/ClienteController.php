@@ -9,6 +9,9 @@ use App\Models\Premio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Exports\ClientesExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 use App\Services\TwilioService;
 
 class ClienteController extends Controller
@@ -16,24 +19,58 @@ class ClienteController extends Controller
     /**
      * Display a listing of the resource.
      */
-  public function index()
+ 
+
+public function index(Request $request)
 {
-    if (auth()->user()->is_admin) {
-
-        $clientes = Cliente::with('sucursal')->get();
-
-    } else {
-
-        $ciudad = auth()->user()->sucursal->ciudad;
-
-        $clientes = Cliente::whereHas('sucursal', function ($query) use ($ciudad) {
-            $query->where('ciudad', $ciudad);
-        })->get();
-
-    }
+    $clientes = $this->consultaClientes($request)->get();
 
     return view('clientes.index', compact('clientes'));
 }
+
+private function consultaClientes(Request $request)
+{
+    $request->validate([
+        'fecha_inicio' => 'nullable|date',
+        'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
+    ]);
+
+    $query = Cliente::with('sucursal');
+
+    // Restricción por ciudad
+    if (!auth()->user()->is_admin) {
+
+        $ciudad = auth()->user()->sucursal->ciudad;
+
+        $query->whereHas('sucursal', function ($q) use ($ciudad) {
+            $q->where('ciudad', $ciudad);
+        });
+    }
+
+    // Fecha inicial
+    if ($request->filled('fecha_inicio')) {
+        $query->whereDate('created_at', '>=', $request->fecha_inicio);
+    }
+
+    // Fecha final
+    if ($request->filled('fecha_fin')) {
+        $query->whereDate('created_at', '<=', $request->fecha_fin);
+    }
+
+    return $query->orderBy('created_at', 'desc');
+}
+
+// EXPORTAR CLIENTES
+public function exportar(Request $request)
+{
+    $clientes = $this->consultaClientes($request)->get();
+
+    return Excel::download(
+        new ClientesExport($clientes),
+        'clientes_' . now()->format('d-m-Y_H-i') . '.xlsx'
+    );
+}
+
 
     /**
      * Show the form for creating a new resource.
