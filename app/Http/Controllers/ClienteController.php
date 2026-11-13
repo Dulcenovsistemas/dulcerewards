@@ -105,7 +105,7 @@ public function exportar(Request $request)
                 'regex:/^(52\d{10}|1\d{10})$/'
             ],
 
-            'fecha_nacimiento' => 'nullable|date',
+            'fecha_nacimiento' => 'required|date',
             'tipo_cliente' => 'required|in:propio,empresa',
             'empresa_nombre' => 'nullable|string|max:255',
             'sucursal_registro_id' => 'required|exists:sucursales,id',
