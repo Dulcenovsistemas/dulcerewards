@@ -295,19 +295,19 @@
 
 </div>
 
-  <div class="d-flex justify-content-between align-items-center mt-3">
-                <div>
-                    Mostrando {{ $clientes->firstItem() ?? 0 }}
-                    al {{ $clientes->lastItem() ?? 0 }}
-                    de {{ $clientes->total() }} clientes
-                </div>
+ <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
 
-                <div>
-                    {{ $clientes->links('pagination::bootstrap-5') }}
-                </div>
-            </div>
+    <div class="text-white">
+        Mostrando {{ $clientes->firstItem() ?? 0 }}
+        al {{ $clientes->lastItem() ?? 0 }}
+        de {{ $clientes->total() }} clientes
+    </div>
 
-        </div>
+    <div>
+        {{ $clientes->links('pagination::bootstrap-5') }}
+    </div>
+
+</div>
 
 <script>
 
