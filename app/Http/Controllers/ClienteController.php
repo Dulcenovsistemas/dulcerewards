@@ -23,11 +23,29 @@ class ClienteController extends Controller
 
     public function index(Request $request)
     {
-        $clientes = $this->consultaClientes($request)
-            ->paginate(25)
-            ->withQueryString();
+        $query = $this->consultaClientes($request);
 
-        return view('clientes.index', compact('clientes'));
+        // Estadísticas de todos los clientes
+        $totalClientes = (clone $query)->count();
+
+        $totalCorreos = (clone $query)
+            ->whereNotNull('email')
+            ->where('email', '!=', '')
+            ->count();
+
+        $totalCumpleanos = (clone $query)
+            ->whereNotNull('fecha_nacimiento')
+            ->count();
+
+        // Paginación
+        $clientes = $query->paginate(25)->withQueryString();
+
+        return view('clientes.index', compact(
+            'clientes',
+            'totalClientes',
+            'totalCorreos',
+            'totalCumpleanos'
+        ));
     }
 
     private function consultaClientes(Request $request)

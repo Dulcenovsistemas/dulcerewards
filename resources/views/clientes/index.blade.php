@@ -32,24 +32,27 @@
     <!-- CARDS -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 relative z-10">
 
+        <!-- TOTAL CLIENTES -->
         <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-xl">
             <p class="text-gray-400 text-sm">Total clientes</p>
             <h3 class="text-white text-3xl font-bold">
-                {{ $clientes->total() }}
+                {{ $totalClientes }}
             </h3>
         </div>
 
+        <!-- CORREOS REGISTRADOS -->
         <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-xl">
             <p class="text-gray-400 text-sm">Con correo registrado</p>
             <h3 class="text-pink-400 text-3xl font-bold">
-                {{ $clientes->whereNotNull('email')->count() }}
+                {{ $totalCorreos }}
             </h3>
         </div>
 
+        <!-- CUMPLEAÑOS -->
         <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-xl">
             <p class="text-gray-400 text-sm">Con cumpleaños</p>
             <h3 class="text-green-400 text-3xl font-bold">
-                {{ $clientes->whereNotNull('fecha_nacimiento')->count() }}
+                {{ $totalCumpleanos }}
             </h3>
         </div>
 
@@ -297,104 +300,94 @@
 
 <div class="flex justify-between items-center mt-5 mb-4 flex-wrap gap-4">
 
-    <!-- CONTADOR -->
-    <div class="text-sm text-gray-300">
-        Mostrando
-        <span class="text-white font-semibold">{{ $clientes->firstItem() ?? 0 }}</span>
-        al
-        <span class="text-white font-semibold">{{ $clientes->lastItem() ?? 0 }}</span>
-        de
-        <span class="text-pink-400 font-semibold">{{ $clientes->total() }}</span>
-        clientes
-    </div>
-
+  
     
-<!-- PAGINACIÓN -->
-<div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-5 mb-6">
+    <!-- PAGINACIÓN -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-5 mb-6">
 
-    <!-- CONTADOR -->
-    <div class="text-sm text-gray-300">
-        Mostrando
-        <span class="text-white font-semibold">{{ $clientes->firstItem() ?? 0 }}</span>
-        al
-        <span class="text-white font-semibold">{{ $clientes->lastItem() ?? 0 }}</span>
-        de
-        <span class="text-pink-400 font-semibold">{{ $clientes->total() }}</span>
-        clientes
+        <!-- CONTADOR -->
+        <div class="text-sm text-gray-300">
+            Mostrando
+            <span class="text-white font-semibold">{{ $clientes->firstItem() ?? 0 }}</span>
+            al
+            <span class="text-white font-semibold">{{ $clientes->lastItem() ?? 0 }}</span>
+            de
+            <span class="text-pink-400 font-semibold">{{ $clientes->total() }}</span>
+            clientes
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <nav class="flex items-center gap-2 flex-wrap justify-center">
+
+            <!-- ANTERIOR -->
+            @if ($clientes->onFirstPage())
+                <span class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-600 cursor-not-allowed">
+                    <i class="bi bi-chevron-left"></i>
+                    Anterior
+                </span>
+            @else
+                <a href="{{ $clientes->previousPageUrl() }}"
+                class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 hover:text-white transition">
+                    <i class="bi bi-chevron-left"></i>
+                    Anterior
+                </a>
+            @endif
+
+            <!-- NÚMEROS -->
+            @php
+                $inicio = max(1, $clientes->currentPage() - 2);
+                $fin = min($clientes->lastPage(), $clientes->currentPage() + 2);
+            @endphp
+
+            @if ($inicio > 1)
+                <a href="{{ $clientes->url(1) }}"
+                class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 transition">
+                    1
+                </a>
+
+                @if ($inicio > 2)
+                    <span class="text-gray-500 px-1">...</span>
+                @endif
+            @endif
+
+            @for ($pagina = $inicio; $pagina <= $fin; $pagina++)
+                <a href="{{ $clientes->url($pagina) }}"
+                class="min-w-10 text-center px-3 py-2 rounded-lg border transition
+                {{ $clientes->currentPage() == $pagina
+                        ? 'bg-pink-500 border-pink-500 text-white shadow-lg shadow-pink-500/20'
+                        : 'bg-white/5 border-white/10 text-gray-300 hover:bg-pink-500 hover:text-white' }}">
+                    {{ $pagina }}
+                </a>
+            @endfor
+
+            @if ($fin < $clientes->lastPage())
+                @if ($fin < $clientes->lastPage() - 1)
+                    <span class="text-gray-500 px-1">...</span>
+                @endif
+
+                <a href="{{ $clientes->url($clientes->lastPage()) }}"
+                class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 transition">
+                    {{ $clientes->lastPage() }}
+                </a>
+            @endif
+
+            <!-- SIGUIENTE -->
+            @if ($clientes->hasMorePages())
+                <a href="{{ $clientes->nextPageUrl() }}"
+                class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 hover:text-white transition">
+                    Siguiente
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            @else
+                <span class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-600 cursor-not-allowed">
+                    Siguiente
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            @endif
+
+        </nav>
+
     </div>
-
-    <!-- NAVEGACIÓN -->
-    <nav class="flex items-center gap-2 flex-wrap justify-center">
-
-        <!-- ANTERIOR -->
-        @if ($clientes->onFirstPage())
-            <span class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-600 cursor-not-allowed">
-                <i class="bi bi-chevron-left"></i>
-                Anterior
-            </span>
-        @else
-            <a href="{{ $clientes->previousPageUrl() }}"
-               class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 hover:text-white transition">
-                <i class="bi bi-chevron-left"></i>
-                Anterior
-            </a>
-        @endif
-
-        <!-- NÚMEROS -->
-        @php
-            $inicio = max(1, $clientes->currentPage() - 2);
-            $fin = min($clientes->lastPage(), $clientes->currentPage() + 2);
-        @endphp
-
-        @if ($inicio > 1)
-            <a href="{{ $clientes->url(1) }}"
-               class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 transition">
-                1
-            </a>
-
-            @if ($inicio > 2)
-                <span class="text-gray-500 px-1">...</span>
-            @endif
-        @endif
-
-        @for ($pagina = $inicio; $pagina <= $fin; $pagina++)
-            <a href="{{ $clientes->url($pagina) }}"
-               class="min-w-10 text-center px-3 py-2 rounded-lg border transition
-               {{ $clientes->currentPage() == $pagina
-                    ? 'bg-pink-500 border-pink-500 text-white shadow-lg shadow-pink-500/20'
-                    : 'bg-white/5 border-white/10 text-gray-300 hover:bg-pink-500 hover:text-white' }}">
-                {{ $pagina }}
-            </a>
-        @endfor
-
-        @if ($fin < $clientes->lastPage())
-            @if ($fin < $clientes->lastPage() - 1)
-                <span class="text-gray-500 px-1">...</span>
-            @endif
-
-            <a href="{{ $clientes->url($clientes->lastPage()) }}"
-               class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 transition">
-                {{ $clientes->lastPage() }}
-            </a>
-        @endif
-
-        <!-- SIGUIENTE -->
-        @if ($clientes->hasMorePages())
-            <a href="{{ $clientes->nextPageUrl() }}"
-               class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-pink-500 hover:text-white transition">
-                Siguiente
-                <i class="bi bi-chevron-right"></i>
-            </a>
-        @else
-            <span class="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-600 cursor-not-allowed">
-                Siguiente
-                <i class="bi bi-chevron-right"></i>
-            </span>
-        @endif
-
-    </nav>
-
-</div>
 
 
 </div>
