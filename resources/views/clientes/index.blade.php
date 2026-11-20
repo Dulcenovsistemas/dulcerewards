@@ -295,17 +295,22 @@
 
 </div>
 
- <div class="flex justify-between items-center mt-4 flex-wrap gap-3">
- 
+<div class="flex justify-between items-center mt-5 mb-4 flex-wrap gap-4">
 
-    <div class="text-white">
-        Mostrando {{ $clientes->firstItem() ?? 0 }}
-        al {{ $clientes->lastItem() ?? 0 }}
-        de {{ $clientes->total() }} clientes
+    <!-- CONTADOR -->
+    <div class="text-sm text-gray-300">
+        Mostrando
+        <span class="text-white font-semibold">{{ $clientes->firstItem() ?? 0 }}</span>
+        al
+        <span class="text-white font-semibold">{{ $clientes->lastItem() ?? 0 }}</span>
+        de
+        <span class="text-pink-400 font-semibold">{{ $clientes->total() }}</span>
+        clientes
     </div>
 
-    <div>
-        {{ $clientes->links('pagination::bootstrap-5') }}
+    <!-- PAGINACIÓN -->
+    <div class="clientes-pagination">
+        {{ $clientes->onEachSide(2)->links('pagination::bootstrap-5') }}
     </div>
 
 </div>
@@ -341,38 +346,58 @@ function toggleMenu() {
 
 @endsection
 <style>
-.pagination {
+/* CONTENEDOR */
+.clientes-pagination {
     display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 0;
-    gap: 5px;
+    justify-content: flex-end;
+    align-items: center;
 }
 
-.pagination .page-link {
+/* LISTA DE PAGINACIÓN */
+.clientes-pagination .pagination {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    margin: 0;
+}
+
+/* BOTONES */
+.clientes-pagination .page-link {
     background: #252d38;
     border: 1px solid #3b4655;
     color: #fff;
-    border-radius: 6px;
+    border-radius: 8px !important;
     padding: 8px 13px;
+    min-width: 38px;
+    text-align: center;
     text-decoration: none;
 }
 
-.pagination .page-link:hover {
-    background: #3b4655;
-    color: #fff;
-}
-
-.pagination .page-item.active .page-link {
+/* HOVER */
+.clientes-pagination .page-link:hover {
     background: #ec4899;
     border-color: #ec4899;
     color: white;
 }
 
-.pagination .page-item.disabled .page-link {
+/* PÁGINA ACTUAL */
+.clientes-pagination .page-item.active .page-link {
+    background: #ec4899;
+    border-color: #ec4899;
+    color: white;
+}
+
+/* DESHABILITADOS */
+.clientes-pagination .page-item.disabled .page-link {
     background: #1b222c;
     color: #777;
     border-color: #3b4655;
+}
+
+/* OCULTAR RESUMEN DUPLICADO */
+.clientes-pagination nav .small.text-muted {
+    display: none;
 }
 </style>
