@@ -35,7 +35,7 @@
         <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-xl">
             <p class="text-gray-400 text-sm">Total clientes</p>
             <h3 class="text-white text-3xl font-bold">
-                {{ $clientes->count() }}
+                {{ $clientes->total() }}
             </h3>
         </div>
 
