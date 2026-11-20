@@ -21,55 +21,57 @@ class ClienteController extends Controller
      */
  
 
-public function index(Request $request)
-{
-    $clientes = $this->consultaClientes($request)->get();
+    public function index(Request $request)
+    {
+        $clientes = $this->consultaClientes($request)
+            ->paginate(25)
+            ->withQueryString();
 
-    return view('clientes.index', compact('clientes'));
-}
-
-private function consultaClientes(Request $request)
-{
-    $request->validate([
-        'fecha_inicio' => 'nullable|date',
-        'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-    ]);
-
-    $query = Cliente::with('sucursal');
-
-    // Restricción por ciudad
-    if (!auth()->user()->is_admin) {
-
-        $ciudad = auth()->user()->sucursal->ciudad;
-
-        $query->whereHas('sucursal', function ($q) use ($ciudad) {
-            $q->where('ciudad', $ciudad);
-        });
+        return view('clientes.index', compact('clientes'));
     }
 
-    // Fecha inicial
-    if ($request->filled('fecha_inicio')) {
-        $query->whereDate('created_at', '>=', $request->fecha_inicio);
+    private function consultaClientes(Request $request)
+    {
+        $request->validate([
+            'fecha_inicio' => 'nullable|date',
+            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
+        ]);
+
+        $query = Cliente::with('sucursal');
+
+        // Restricción por ciudad
+        if (!auth()->user()->is_admin) {
+
+            $ciudad = auth()->user()->sucursal->ciudad;
+
+            $query->whereHas('sucursal', function ($q) use ($ciudad) {
+                $q->where('ciudad', $ciudad);
+            });
+        }
+
+        // Fecha inicial
+        if ($request->filled('fecha_inicio')) {
+            $query->whereDate('created_at', '>=', $request->fecha_inicio);
+        }
+
+        // Fecha final
+        if ($request->filled('fecha_fin')) {
+            $query->whereDate('created_at', '<=', $request->fecha_fin);
+        }
+
+        return $query->orderBy('created_at', 'desc');
     }
 
-    // Fecha final
-    if ($request->filled('fecha_fin')) {
-        $query->whereDate('created_at', '<=', $request->fecha_fin);
+    // EXPORTAR CLIENTES
+    public function exportar(Request $request)
+    {
+        $clientes = $this->consultaClientes($request)->get();
+
+        return Excel::download(
+            new ClientesExport($clientes),
+            'clientes_' . now()->format('d-m-Y_H-i') . '.xlsx'
+        );
     }
-
-    return $query->orderBy('created_at', 'desc');
-}
-
-// EXPORTAR CLIENTES
-public function exportar(Request $request)
-{
-    $clientes = $this->consultaClientes($request)->get();
-
-    return Excel::download(
-        new ClientesExport($clientes),
-        'clientes_' . now()->format('d-m-Y_H-i') . '.xlsx'
-    );
-}
 
 
     /**
@@ -194,59 +196,59 @@ public function exportar(Request $request)
      * Display the specified resource.
      */
 
-   public function show($id)
-{
-    $cliente = Cliente::with('sucursal')->findOrFail($id);
+    public function show($id)
+    {
+        $cliente = Cliente::with('sucursal')->findOrFail($id);
 
-    $puntos = MovimientoPunto::where('cliente_id', $id)->sum('puntos');
+        $puntos = MovimientoPunto::where('cliente_id', $id)->sum('puntos');
 
-    $ciudad = $cliente->sucursal->ciudad;
+        $ciudad = $cliente->sucursal->ciudad;
 
-    $tienePremiosLocales = Premio::where('activo', 1)
-        ->where('ciudad', $ciudad)
-        ->exists();
-
-    if ($tienePremiosLocales) {
-
-        $premios = Premio::where('activo', 1)
+        $tienePremiosLocales = Premio::where('activo', 1)
             ->where('ciudad', $ciudad)
-            ->orderBy('puntos_requeridos')
+            ->exists();
+
+        if ($tienePremiosLocales) {
+
+            $premios = Premio::where('activo', 1)
+                ->where('ciudad', $ciudad)
+                ->orderBy('puntos_requeridos')
+                ->get();
+
+        } else {
+
+            $premios = Premio::where('activo', 1)
+                ->whereNull('ciudad')
+                ->orderBy('puntos_requeridos')
+                ->get();
+        }
+
+        $premioActual = $premios->firstWhere(
+            'puntos_requeridos',
+            $puntos
+        );
+
+        $movimientos = MovimientoPunto::where('cliente_id', $id)
+            ->latest()
             ->get();
 
-    } else {
-
-        $premios = Premio::where('activo', 1)
-            ->whereNull('ciudad')
-            ->orderBy('puntos_requeridos')
+        $canjes = MovimientoPunto::where('cliente_id', $id)
+            ->where('tipo', 'canje')
+            ->latest()
             ->get();
+
+        $sucursales = Sucursal::orderBy('nombre')->get();
+
+        return view('clientes.show', compact(
+            'cliente',
+            'puntos',
+            'premios',
+            'premioActual',
+            'movimientos',
+            'canjes',
+            'sucursales'
+        ));
     }
-
-    $premioActual = $premios->firstWhere(
-        'puntos_requeridos',
-        $puntos
-    );
-
-    $movimientos = MovimientoPunto::where('cliente_id', $id)
-        ->latest()
-        ->get();
-
-    $canjes = MovimientoPunto::where('cliente_id', $id)
-        ->where('tipo', 'canje')
-        ->latest()
-        ->get();
-
-    $sucursales = Sucursal::orderBy('nombre')->get();
-
-    return view('clientes.show', compact(
-        'cliente',
-        'puntos',
-        'premios',
-        'premioActual',
-        'movimientos',
-        'canjes',
-        'sucursales'
-    ));
-}
 
     /**
      * Show the form for editing the specified resource.
